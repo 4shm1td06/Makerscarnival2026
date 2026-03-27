@@ -112,6 +112,18 @@
   height: auto;
   animation: heroFloat 7s ease-in-out infinite;
   }
+  .left-img {
+    height: 90%;      
+    width: 100px;        
+    position: absolute; 
+    left: 0;
+}
+ .right-img {
+    height: 90%;      
+    width: 250px;        
+    position: absolute; 
+    right: 0;
+ }
   @keyframes heroFloat {
     0%,100% { transform: translateY(0); }
     50%      { transform: translateY(-16px); }
@@ -447,6 +459,12 @@
 <!-- HERO -->
 <section id="hero">
   <div class="grid-bg"></div>
+  <div class="left-img">
+    <img src="/jumks.png" alt="Maker's Carnival 5th Edition" class="hero-img" />
+  </div>
+  <div class="right-img">
+    <img src="/jecrc.png" alt="Maker's Carnival 5th Edition" class="hero-img" />
+  </div>
   <div style="position:relative; z-index:1;">
     <div class="hero-img-wrap align-center">
       <img src="/web.png" alt="Maker's Carnival 5th Edition" class="hero-img" />
@@ -567,7 +585,7 @@
       <p>Test your robotic skills in a series of exciting challenges. From Robo wars to Robo soccer, this is where the best makers showcase their engineering prowess.</p>
       <span class="event-tag">Competition Floor</span>
     </div>
-     <div class="event-card" ">
+     <div class="event-card" >
       <span class="event-number">05</span>
       <span class="event-icon">🎮</span>
       <h3>Mini-Games</h3>
