@@ -1,0 +1,659 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Register — Makers Carnival 2025</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=IBM+Plex+Mono:wght@400;600&family=Space+Grotesk:wght@300;400;500;700&display=swap" rel="stylesheet">
+<script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+<style>
+  :root {
+    --bg:     #ecede8;
+    --bg2:    #e4e5e0;
+    --bg3:    #d8d9d4;
+    --ink:    #111110;
+    --ink2:   #2a2a28;
+    --orange: #d94f00;
+    --muted:  #7a7a72;
+    --border: rgba(17,17,16,0.12);
+    --success: #1a7a4a;
+  }
+  *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body {
+    background: var(--bg);
+    color: var(--ink);
+    font-family: 'Space Grotesk', sans-serif;
+    min-height: 100vh;
+    cursor: none;
+  }
+
+  /* CURSOR */
+  .cursor { width:10px;height:10px;background:var(--orange);border-radius:50%;position:fixed;pointer-events:none;z-index:9999;transition:transform 0.1s; }
+  .cursor-ring { width:34px;height:34px;border:1.5px solid var(--ink);border-radius:50%;position:fixed;pointer-events:none;z-index:9998;transition:all 0.15s ease;opacity:0.3; }
+
+  /* NAV */
+  nav {
+    position: fixed; top:0; width:100%; z-index:100;
+    display:flex; align-items:center; justify-content:space-between;
+    padding:1.2rem 3rem;
+    border-bottom:1px solid var(--border);
+    backdrop-filter:blur(20px);
+    background:rgba(236,237,232,0.85);
+  }
+  .nav-logo { font-family:'Bebas Neue',sans-serif; font-size:1.4rem; letter-spacing:0.12em; color:var(--ink); text-decoration:none; }
+  .nav-logo span { color:var(--orange); }
+  .nav-back { font-family:'IBM Plex Mono',monospace; font-size:0.7rem; letter-spacing:0.12em; text-transform:uppercase; color:var(--muted); text-decoration:none; transition:color 0.2s; }
+  .nav-back:hover { color:var(--ink); }
+
+  /* GRID BG */
+  .grid-bg {
+    position:fixed; inset:0; pointer-events:none; z-index:0;
+    background-image: linear-gradient(rgba(17,17,16,0.04) 1px,transparent 1px), linear-gradient(90deg,rgba(17,17,16,0.04) 1px,transparent 1px);
+    background-size:60px 60px;
+    animation:gridShift 24s linear infinite;
+  }
+  @keyframes gridShift { from{transform:translateY(0)} to{transform:translateY(60px)} }
+
+  /* MAIN LAYOUT */
+  main {
+    position:relative; z-index:1;
+    min-height:100vh;
+    padding: 8rem 3rem 5rem;
+    max-width: 1100px;
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: 1fr 420px;
+    gap: 5rem;
+    align-items: start;
+  }
+
+  /* LEFT PANEL */
+  .left-panel { position: sticky; top: 8rem; }
+  .section-tag { font-family:'IBM Plex Mono',monospace; font-size:0.62rem; letter-spacing:0.25em; text-transform:uppercase; color:var(--orange); margin-bottom:0.8rem; }
+  .page-title { font-family:'Bebas Neue',sans-serif; font-size:clamp(3rem,5vw,5rem); line-height:1; letter-spacing:0.02em; color:var(--ink); margin-bottom:1.5rem; }
+  .page-desc { color:var(--muted); line-height:1.8; font-size:0.95rem; margin-bottom:2.5rem; }
+
+  /* EVENT SELECTOR CARDS */
+  .event-picker-label { font-family:'IBM Plex Mono',monospace; font-size:0.62rem; letter-spacing:0.2em; text-transform:uppercase; color:var(--muted); margin-bottom:1rem; display:block; }
+  .event-cards { display:flex; flex-direction:column; gap:0.75rem; }
+  .event-option {
+    border:1.5px solid var(--border);
+    background:var(--bg2);
+    padding:1.2rem 1.4rem;
+    cursor:none;
+    transition:border-color 0.2s, background 0.2s;
+    position:relative;
+    user-select:none;
+  }
+  .event-option:hover { border-color:rgba(217,79,0,0.4); background:var(--bg3); }
+  .event-option.selected { border-color:var(--orange); background:rgba(217,79,0,0.04); }
+  .event-option input[type="radio"] { display:none; }
+  .event-option-top { display:flex; justify-content:space-between; align-items:flex-start; }
+  .event-name { font-family:'Bebas Neue',sans-serif; font-size:1.3rem; letter-spacing:0.04em; color:var(--ink); }
+  .event-price { font-family:'IBM Plex Mono',monospace; font-size:0.85rem; font-weight:600; color:var(--orange); }
+  .event-price.free-price { color:var(--success); }
+  .event-desc { font-size:0.78rem; color:var(--muted); margin-top:0.3rem; font-family:'IBM Plex Mono',monospace; letter-spacing:0.04em; }
+  .event-check {
+    position:absolute; top:1rem; right:1.2rem;
+    width:18px; height:18px;
+    border:1.5px solid var(--border);
+    border-radius:50%;
+    transition:all 0.2s;
+    display:flex; align-items:center; justify-content:center;
+  }
+  .event-option.selected .event-check { background:var(--orange); border-color:var(--orange); }
+  .event-check::after { content:''; width:6px; height:6px; border-radius:50%; background:#fff; opacity:0; transition:opacity 0.2s; }
+  .event-option.selected .event-check::after { opacity:1; }
+
+  /* SUB-OPTIONS (Robo War categories) */
+  .sub-options { margin-top:1rem; display:none; gap:0.5rem; flex-direction:column; }
+  .event-option.selected .sub-options { display:flex; }
+  .sub-opt {
+    border:1px solid var(--border);
+    padding:0.7rem 1rem;
+    cursor:none;
+    display:flex; justify-content:space-between; align-items:center;
+    background:var(--bg);
+    transition:border-color 0.2s, background 0.2s;
+  }
+  .sub-opt:hover { border-color:rgba(217,79,0,0.35); background:var(--bg2); }
+  .sub-opt.selected { border-color:var(--orange); background:rgba(217,79,0,0.04); }
+  .sub-opt label { font-family:'IBM Plex Mono',monospace; font-size:0.72rem; letter-spacing:0.08em; text-transform:uppercase; color:var(--ink); cursor:none; }
+  .sub-opt span { font-family:'IBM Plex Mono',monospace; font-size:0.72rem; color:var(--orange); font-weight:600; }
+  .sub-opt input[type="radio"] { display:none; }
+
+  /* FORM PANEL */
+  .form-panel {
+    background:var(--bg2);
+    border:1px solid var(--border);
+    padding:2.5rem;
+    position:relative;
+  }
+  .form-panel::before { content:''; position:absolute; top:0; left:0; width:3px; height:100%; background:var(--orange); }
+  .corner-mark { position:absolute; width:12px; height:12px; border-color:var(--orange); border-style:solid; opacity:0.4; }
+  .corner-mark.br { bottom:.7rem; right:.7rem; border-width:0 1.5px 1.5px 0; }
+
+  .form-title { font-family:'Bebas Neue',sans-serif; font-size:1.8rem; letter-spacing:0.04em; color:var(--ink); margin-bottom:0.4rem; }
+  .form-subtitle { font-family:'IBM Plex Mono',monospace; font-size:0.65rem; letter-spacing:0.15em; text-transform:uppercase; color:var(--muted); margin-bottom:2rem; }
+
+  .form-group { margin-bottom:1.4rem; }
+  .form-group label { font-family:'IBM Plex Mono',monospace; font-size:0.62rem; letter-spacing:0.18em; text-transform:uppercase; color:var(--muted); display:block; margin-bottom:0.5rem; }
+  .form-group input {
+    width:100%;
+    background:var(--bg);
+    border:1px solid var(--border);
+    color:var(--ink);
+    font-family:'Space Grotesk',sans-serif;
+    font-size:0.92rem;
+    padding:0.8rem 1rem;
+    outline:none;
+    transition:border-color 0.2s;
+    -webkit-appearance:none;
+  }
+  .form-group input:focus { border-color:var(--orange); }
+  .form-group input::placeholder { color:var(--muted); font-size:0.85rem; }
+  .form-group input.error { border-color:#c0392b; }
+
+  .form-row { display:grid; grid-template-columns:1fr 1fr; gap:1rem; }
+
+  /* TEAM MEMBERS */
+  .team-section { margin-top:1.5rem; padding-top:1.5rem; border-top:1px solid var(--border); }
+  .team-section-title { font-family:'IBM Plex Mono',monospace; font-size:0.62rem; letter-spacing:0.2em; text-transform:uppercase; color:var(--muted); margin-bottom:1rem; display:flex; justify-content:space-between; align-items:center; }
+  .add-member-btn {
+    font-family:'IBM Plex Mono',monospace; font-size:0.6rem; letter-spacing:0.1em; text-transform:uppercase;
+    background:transparent; border:1px solid var(--border); color:var(--ink); padding:0.3rem 0.7rem; cursor:none;
+    transition:border-color 0.2s, background 0.2s;
+  }
+  .add-member-btn:hover { border-color:var(--orange); background:rgba(217,79,0,0.04); }
+  .member-row { display:flex; gap:0.6rem; align-items:center; margin-bottom:0.6rem; }
+  .member-row input { flex:1; background:var(--bg); border:1px solid var(--border); color:var(--ink); font-family:'Space Grotesk',sans-serif; font-size:0.85rem; padding:0.65rem 0.8rem; outline:none; transition:border-color 0.2s; }
+  .member-row input:focus { border-color:var(--orange); }
+  .remove-member { background:transparent; border:1px solid var(--border); color:var(--muted); padding:0.65rem 0.7rem; cursor:none; font-size:0.75rem; transition:all 0.2s; flex-shrink:0; }
+  .remove-member:hover { border-color:#c0392b; color:#c0392b; }
+
+  /* ORDER SUMMARY */
+  .order-summary { margin:2rem 0 1.5rem; padding:1.2rem; background:var(--bg); border:1px solid var(--border); }
+  .order-row { display:flex; justify-content:space-between; align-items:center; padding:0.4rem 0; }
+  .order-row-label { font-family:'IBM Plex Mono',monospace; font-size:0.7rem; letter-spacing:0.08em; color:var(--muted); }
+  .order-row-val { font-family:'IBM Plex Mono',monospace; font-size:0.75rem; font-weight:600; color:var(--ink); }
+  .order-divider { border:none; border-top:1px solid var(--border); margin:0.5rem 0; }
+  .order-total .order-row-label { color:var(--ink); font-weight:600; }
+  .order-total .order-row-val { color:var(--orange); font-size:1rem; }
+  .free-badge { font-family:'IBM Plex Mono',monospace; font-size:0.65rem; letter-spacing:0.1em; text-transform:uppercase; background:rgba(26,122,74,0.1); color:var(--success); border:1px solid rgba(26,122,74,0.25); padding:0.2rem 0.6rem; }
+
+  /* SUBMIT BTN */
+  .submit-btn {
+    width:100%;
+    font-family:'IBM Plex Mono',monospace;
+    font-size:0.78rem; letter-spacing:0.12em; text-transform:uppercase;
+    background:var(--ink); color:var(--bg);
+    border:none; padding:1.1rem; cursor:none; font-weight:600;
+    transition:background 0.2s, transform 0.15s;
+    position:relative; overflow:hidden;
+  }
+  .submit-btn:hover { background:var(--orange); transform:translateY(-1px); }
+  .submit-btn:disabled { opacity:0.5; cursor:not-allowed; transform:none; }
+  .submit-btn.free-btn { background:var(--success); }
+  .submit-btn.free-btn:hover { background:#15663e; }
+
+  /* ERROR / NOTICE */
+  .form-notice { font-family:'IBM Plex Mono',monospace; font-size:0.65rem; letter-spacing:0.08em; color:var(--muted); text-align:center; margin-top:1rem; line-height:1.6; }
+  .error-msg { font-family:'IBM Plex Mono',monospace; font-size:0.65rem; color:#c0392b; margin-top:0.3rem; display:none; }
+
+  /* SUCCESS STATE */
+  .success-overlay {
+    display:none;
+    position:fixed; inset:0; z-index:500;
+    background:var(--bg);
+    flex-direction:column; align-items:center; justify-content:center;
+    text-align:center; padding:3rem;
+  }
+  .success-overlay.show { display:flex; animation:fadeIn 0.4s ease; }
+  @keyframes fadeIn { from{opacity:0;transform:translateY(20px)} to{opacity:1;transform:translateY(0)} }
+  .success-icon { font-size:3rem; margin-bottom:1.5rem; }
+  .success-title { font-family:'Bebas Neue',sans-serif; font-size:4rem; color:var(--ink); margin-bottom:0.5rem; }
+  .success-sub { font-family:'IBM Plex Mono',monospace; font-size:0.75rem; letter-spacing:0.15em; text-transform:uppercase; color:var(--orange); margin-bottom:1.5rem; }
+  .success-detail { color:var(--muted); max-width:400px; line-height:1.8; font-size:0.92rem; }
+  .success-ref { font-family:'IBM Plex Mono',monospace; font-size:0.7rem; color:var(--muted); margin-top:1rem; letter-spacing:0.1em; }
+  .success-back { display:inline-block; margin-top:2rem; font-family:'IBM Plex Mono',monospace; font-size:0.72rem; letter-spacing:0.12em; text-transform:uppercase; background:var(--ink); color:var(--bg); padding:0.9rem 2rem; text-decoration:none; transition:background 0.2s; }
+  .success-back:hover { background:var(--orange); }
+
+  /* RESPONSIVE */
+  @media(max-width:900px) {
+    nav { padding:1rem 1.5rem; }
+    main { grid-template-columns:1fr; gap:3rem; padding:7rem 1.5rem 4rem; }
+    .left-panel { position:static; }
+    .form-row { grid-template-columns:1fr; }
+  }
+</style>
+</head>
+<body>
+
+<div class="cursor" id="cursor"></div>
+<div class="cursor-ring" id="cursorRing"></div>
+<div class="grid-bg"></div>
+
+<!-- NAV -->
+<nav>
+  <a href="index.html" class="nav-logo">Makers<span>Carnival</span></a>
+  <a href="index.html" class="nav-back">← Back to Home</a>
+</nav>
+
+<!-- SUCCESS OVERLAY -->
+<div class="success-overlay" id="successOverlay">
+  <div class="success-icon">✦</div>
+  <h1 class="success-title">You're In!</h1>
+  <p class="success-sub">Registration Confirmed</p>
+  <p class="success-detail" id="successDetail">Your spot at Makers Carnival 2025 is locked in. See you on January 29–30 at JECRC University, Jaipur.</p>
+  <p class="success-ref" id="successRef"></p>
+  <a href="index.html" class="success-back">Back to Home</a>
+</div>
+
+<main>
+  <!-- LEFT: Event Selector -->
+  <div class="left-panel">
+    <p class="section-tag">// Step 01 — Choose Event</p>
+    <h1 class="page-title">Register<br>for<br>Carnival</h1>
+    <p class="page-desc">Pick your arena, fill in your details, and secure your spot at North India's most anticipated student-maker event.</p>
+
+    <span class="event-picker-label">// Select your event</span>
+    <div class="event-cards" id="eventCards">
+
+      <!-- Robo Soccer -->
+      <div class="event-option" data-event="robo-soccer" data-price="600" data-name="Robo Soccer" onclick="selectEvent(this)">
+        <input type="radio" name="event" value="robo-soccer">
+        <div class="event-check"></div>
+        <div class="event-option-top" style="padding-right:1.5rem;">
+          <div>
+            <div class="event-name">Robo Soccer</div>
+            <div class="event-desc">Autonomous bot football — best team wins</div>
+          </div>
+          <div class="event-price">₹600</div>
+        </div>
+      </div>
+
+      <!-- Robo War -->
+      <div class="event-option" data-event="robo-war" data-price="0" data-name="Robo War" onclick="selectEvent(this)">
+        <input type="radio" name="event" value="robo-war">
+        <div class="event-check"></div>
+        <div class="event-option-top" style="padding-right:1.5rem;">
+          <div>
+            <div class="event-name">Robo War</div>
+            <div class="event-desc">Combat robotics — choose your weight class</div>
+          </div>
+          <div class="event-price" id="roboWarPrice">₹1000</div>
+        </div>
+        <!-- Sub categories -->
+        <div class="sub-options" id="roboWarSubs">
+          <div class="sub-opt selected" data-cat="8kg" data-price="1000" onclick="selectSubCat(this, event)">
+            <input type="radio" name="robowar-cat" value="8kg" checked>
+            <label>8 kg Category</label>
+            <span>₹1,000</span>
+          </div>
+          <div class="sub-opt" data-cat="15kg" data-price="1000" onclick="selectSubCat(this, event)">
+            <input type="radio" name="robowar-cat" value="15kg">
+            <label>15 kg Category</label>
+            <span>₹1,000</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Open Innovation -->
+      <div class="event-option" data-event="open-innovation" data-price="0" data-name="Open Innovation" onclick="selectEvent(this)">
+        <input type="radio" name="event" value="open-innovation">
+        <div class="event-check"></div>
+        <div class="event-option-top" style="padding-right:1.5rem;">
+          <div>
+            <div class="event-name">Open Innovation</div>
+            <div class="event-desc">Present your idea — open to all builders</div>
+          </div>
+          <div class="event-price free-price">FREE</div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Info strip -->
+    <div style="margin-top:2rem; padding:1rem 1.2rem; border:1px solid var(--border); background:var(--bg2);">
+      <p style="font-family:'IBM Plex Mono',monospace; font-size:0.62rem; letter-spacing:0.12em; color:var(--muted); line-height:1.8;">
+        📅 Jan 29–30, 2025 &nbsp;·&nbsp; JECRC University, Jaipur<br>
+        🔒 Secure payments via Razorpay<br>
+        ✉️ Confirmation sent to your email
+      </p>
+    </div>
+  </div>
+
+  <!-- RIGHT: Form -->
+  <div class="form-panel">
+    <div class="corner-mark br"></div>
+    <p class="form-title">Your Details</p>
+    <p class="form-subtitle">// Step 02 — Registrant Info</p>
+
+    <form id="regForm" novalidate>
+      <div class="form-row">
+        <div class="form-group">
+          <label>Full Name *</label>
+          <input type="text" id="name" placeholder="Arjun Sharma" autocomplete="name">
+          <p class="error-msg" id="nameErr">Please enter your name</p>
+        </div>
+        <div class="form-group">
+          <label>Phone *</label>
+          <input type="tel" id="phone" placeholder="98XXXXXXXX" maxlength="10" autocomplete="tel">
+          <p class="error-msg" id="phoneErr">Enter a valid 10-digit number</p>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label>Email *</label>
+        <input type="email" id="email" placeholder="you@college.edu" autocomplete="email">
+        <p class="error-msg" id="emailErr">Please enter a valid email</p>
+      </div>
+
+      <div class="form-group">
+        <label>College / University *</label>
+        <input type="text" id="college" placeholder="JECRC University" autocomplete="organization">
+        <p class="error-msg" id="collegeErr">Please enter your college name</p>
+      </div>
+
+      <div class="form-group">
+        <label>Team Name *</label>
+        <input type="text" id="teamName" placeholder="Circuit Breakers" autocomplete="off">
+        <p class="error-msg" id="teamErr">Please enter a team name</p>
+      </div>
+
+      <!-- Team Members -->
+      <div class="team-section">
+        <div class="team-section-title">
+          <span>// Team Members (optional)</span>
+          <button type="button" class="add-member-btn" onclick="addMember()">+ Add Member</button>
+        </div>
+        <div id="membersContainer"></div>
+        <p style="font-family:'IBM Plex Mono',monospace;font-size:0.6rem;color:var(--muted);letter-spacing:0.08em;">Add teammate names (any number of members)</p>
+      </div>
+
+      <!-- Order Summary -->
+      <div class="order-summary" id="orderSummary">
+        <div class="order-row">
+          <span class="order-row-label">Event</span>
+          <span class="order-row-val" id="summaryEvent">— Select an event</span>
+        </div>
+        <div class="order-row" id="catRow" style="display:none;">
+          <span class="order-row-label">Category</span>
+          <span class="order-row-val" id="summaryCategory">—</span>
+        </div>
+        <hr class="order-divider">
+        <div class="order-row order-total">
+          <span class="order-row-label">Total</span>
+          <span class="order-row-val" id="summaryTotal">—</span>
+        </div>
+      </div>
+
+      <button type="submit" class="submit-btn" id="submitBtn">
+        Select an Event to Continue
+      </button>
+    </form>
+
+    <p class="form-notice">
+      Payments processed securely by Razorpay.<br>
+      Confirm on <strong>makers-carnival@jecrc.ac.in</strong> for queries.
+    </p>
+  </div>
+</main>
+
+<script>
+  // ── Cursor ──────────────────────────────────────────────────────────────────
+  const cursor = document.getElementById('cursor');
+  const ring   = document.getElementById('cursorRing');
+  let mx=0,my=0,rx=0,ry=0;
+  document.addEventListener('mousemove',e=>{ mx=e.clientX; my=e.clientY; });
+  (function loop(){
+    rx+=(mx-rx)*0.14; ry+=(my-ry)*0.14;
+    cursor.style.left=mx-5+'px'; cursor.style.top=my-5+'px';
+    ring.style.left=rx-17+'px'; ring.style.top=ry-17+'px';
+    requestAnimationFrame(loop);
+  })();
+  document.querySelectorAll('a,button,.event-option,.sub-opt').forEach(el=>{
+    el.addEventListener('mouseenter',()=>{ ring.style.transform='scale(1.7)'; cursor.style.transform='scale(0.5)'; });
+    el.addEventListener('mouseleave',()=>{ ring.style.transform='scale(1)'; cursor.style.transform='scale(1)'; });
+  });
+
+  // ── State ────────────────────────────────────────────────────────────────────
+  let selectedEvent = null;   // { event, name, price }
+  let selectedSubCatEl = document.querySelector('.sub-opt.selected');
+
+  // ── Event Selection ──────────────────────────────────────────────────────────
+  function selectEvent(el) {
+    document.querySelectorAll('.event-option').forEach(e=>e.classList.remove('selected'));
+    el.classList.add('selected');
+    const evt   = el.dataset.event;
+    const eName = el.dataset.name;
+    let price   = parseInt(el.dataset.price);
+
+    if (evt === 'robo-war') {
+      selectedSubCatEl = document.querySelector('#roboWarSubs .sub-opt.selected');
+      price = parseInt(selectedSubCatEl.dataset.price);
+    }
+
+    selectedEvent = { event: evt, name: eName, price };
+    updateSummary();
+  }
+
+  function selectSubCat(el, e) {
+    e.stopPropagation();
+    document.querySelectorAll('.sub-opt').forEach(s=>s.classList.remove('selected'));
+    el.classList.add('selected');
+    selectedSubCatEl = el;
+    if (selectedEvent && selectedEvent.event === 'robo-war') {
+      selectedEvent.price = parseInt(el.dataset.price);
+      updateSummary();
+    }
+  }
+
+  // ── Summary Update ────────────────────────────────────────────────────────────
+  function updateSummary() {
+    if (!selectedEvent) return;
+    document.getElementById('summaryEvent').textContent = selectedEvent.name;
+    const catRow = document.getElementById('catRow');
+    if (selectedEvent.event === 'robo-war' && selectedSubCatEl) {
+      catRow.style.display = 'flex';
+      document.getElementById('summaryCategory').textContent = selectedSubCatEl.dataset.cat + ' class';
+    } else {
+      catRow.style.display = 'none';
+    }
+    const btn = document.getElementById('submitBtn');
+    if (selectedEvent.price === 0) {
+      document.getElementById('summaryTotal').innerHTML = '<span class="free-badge">FREE</span>';
+      btn.textContent = 'Register for Free →';
+      btn.className = 'submit-btn free-btn';
+    } else {
+      document.getElementById('summaryTotal').textContent = '₹' + selectedEvent.price.toLocaleString('en-IN');
+      btn.textContent = 'Pay ₹' + selectedEvent.price.toLocaleString('en-IN') + ' & Register →';
+      btn.className = 'submit-btn';
+    }
+    btn.disabled = false;
+  }
+
+  // ── Team Members ──────────────────────────────────────────────────────────────
+  let memberCount = 0;
+  function addMember() {
+    memberCount++;
+    const div = document.createElement('div');
+    div.className = 'member-row';
+    div.id = 'member-' + memberCount;
+    div.innerHTML = `
+      <input type="text" placeholder="Member ${memberCount} name" />
+      <button type="button" class="remove-member" onclick="removeMember(${memberCount})">✕</button>
+    `;
+    document.getElementById('membersContainer').appendChild(div);
+    // cursor for new elements
+    div.querySelectorAll('button,input').forEach(el=>{
+      el.addEventListener('mouseenter',()=>{ ring.style.transform='scale(1.7)'; cursor.style.transform='scale(0.5)'; });
+      el.addEventListener('mouseleave',()=>{ ring.style.transform='scale(1)'; cursor.style.transform='scale(1)'; });
+    });
+  }
+  function removeMember(id) {
+    const el = document.getElementById('member-'+id);
+    if (el) el.remove();
+  }
+
+  // ── Validation ────────────────────────────────────────────────────────────────
+  function validate() {
+    let ok = true;
+    const fields = [
+      { id:'name',    err:'nameErr',    test: v=>v.trim().length>1 },
+      { id:'phone',   err:'phoneErr',   test: v=>/^[6-9]\d{9}$/.test(v.trim()) },
+      { id:'email',   err:'emailErr',   test: v=>/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v.trim()) },
+      { id:'college', err:'collegeErr', test: v=>v.trim().length>2 },
+      { id:'teamName',err:'teamErr',    test: v=>v.trim().length>0 },
+    ];
+    fields.forEach(f=>{
+      const inp = document.getElementById(f.id);
+      const err = document.getElementById(f.err);
+      if (!f.test(inp.value)) {
+        inp.classList.add('error'); err.style.display='block'; ok=false;
+      } else {
+        inp.classList.remove('error'); err.style.display='none';
+      }
+    });
+    if (!selectedEvent) { alert('Please select an event first.'); ok=false; }
+    return ok;
+  }
+
+  // ── Collect Form Data ─────────────────────────────────────────────────────────
+  function getFormData() {
+    const members = [...document.querySelectorAll('#membersContainer input')]
+      .map(i=>i.value.trim()).filter(Boolean);
+    return {
+      name:     document.getElementById('name').value.trim(),
+      email:    document.getElementById('email').value.trim(),
+      phone:    document.getElementById('phone').value.trim(),
+      college:  document.getElementById('college').value.trim(),
+      teamName: document.getElementById('teamName').value.trim(),
+      members,
+      event:    selectedEvent.name,
+      category: selectedSubCatEl ? selectedSubCatEl.dataset.cat : '',
+      price:    selectedEvent.price,
+    };
+  }
+
+  // ── Free Registration Flow ────────────────────────────────────────────────────
+  function handleFreeRegistration(data) {
+    // TODO: Replace with your Google Form prefill URL
+    // Example: https://docs.google.com/forms/d/e/YOUR_FORM_ID/viewform?usp=pp_url&entry.123=Name&entry.456=Email
+    const googleFormBase = 'YOUR_GOOGLE_FORM_PREFILL_URL';
+
+    showSuccess(data, null);
+
+    // Uncomment and configure once you have your Google Form URL:
+    // const params = new URLSearchParams({
+    //   'entry.FIELD_ID_NAME': data.name,
+    //   'entry.FIELD_ID_EMAIL': data.email,
+    //   'entry.FIELD_ID_PHONE': data.phone,
+    //   'entry.FIELD_ID_COLLEGE': data.college,
+    //   'entry.FIELD_ID_TEAM': data.teamName,
+    //   'entry.FIELD_ID_EVENT': data.event,
+    // });
+    // window.open(googleFormBase + '?' + params.toString(), '_blank');
+  }
+
+  // ── Razorpay Payment Flow ─────────────────────────────────────────────────────
+  function initiateRazorpay(data) {
+    const options = {
+      // ⚠️ REPLACE with your live key before going live: rzp_live_XXXXXXXXXXXXXXXX
+      key: 'rzp_test_REPLACE_WITH_YOUR_KEY',
+      amount: data.price * 100,          // Razorpay takes paise
+      currency: 'INR',
+      name: 'Makers Carnival 2025',
+      description: data.event + (data.category ? ' — ' + data.category : ''),
+      image: '',                          // Optional: your logo URL
+      prefill: {
+        name:    data.name,
+        email:   data.email,
+        contact: data.phone,
+      },
+      notes: {
+        college:   data.college,
+        team_name: data.teamName,
+        event:     data.event,
+        category:  data.category,
+        members:   data.members.join(', '),
+      },
+      theme: { color: '#d94f00' },
+      modal: { ondismiss: function(){ document.getElementById('submitBtn').disabled=false; } },
+      handler: function(response) {
+        // Payment successful — send to Google Sheets via Form
+        submitToGoogleForm(data, response.razorpay_payment_id);
+        showSuccess(data, response.razorpay_payment_id);
+      }
+    };
+    const rzp = new Razorpay(options);
+    rzp.on('payment.failed', function(resp){
+      alert('Payment failed: ' + resp.error.description);
+      document.getElementById('submitBtn').disabled = false;
+    });
+    rzp.open();
+  }
+
+  // ── Google Form Submission ────────────────────────────────────────────────────
+  function submitToGoogleForm(data, paymentId) {
+    // TODO: Replace entry IDs with your actual Google Form field IDs
+    // Get them from: Right-click field in Google Form → Inspect → find name="entry.XXXXXXXXX"
+    const FORM_ACTION = 'https://docs.google.com/forms/d/e/YOUR_FORM_ID/formResponse';
+
+    const body = new URLSearchParams({
+      'entry.REPLACE_NAME_ID':     data.name,
+      'entry.REPLACE_EMAIL_ID':    data.email,
+      'entry.REPLACE_PHONE_ID':    data.phone,
+      'entry.REPLACE_COLLEGE_ID':  data.college,
+      'entry.REPLACE_TEAM_ID':     data.teamName,
+      'entry.REPLACE_EVENT_ID':    data.event,
+      'entry.REPLACE_CAT_ID':      data.category || 'N/A',
+      'entry.REPLACE_MEMBERS_ID':  data.members.join(', ') || 'Solo',
+      'entry.REPLACE_PAYMENT_ID':  paymentId || 'FREE',
+    });
+
+    // Submit silently (Google Forms ignores CORS so we use no-cors)
+    fetch(FORM_ACTION, { method:'POST', mode:'no-cors', body }).catch(()=>{});
+  }
+
+  // ── Show Success ──────────────────────────────────────────────────────────────
+  function showSuccess(data, paymentId) {
+    const overlay = document.getElementById('successOverlay');
+    document.getElementById('successDetail').textContent =
+      `Hey ${data.name}! Your registration for ${data.event}${data.category?' ('+data.category+')':''} is confirmed. See you on Jan 29–30 at JECRC University, Jaipur.`;
+    if (paymentId) {
+      document.getElementById('successRef').textContent = 'Payment ID: ' + paymentId;
+    }
+    overlay.classList.add('show');
+    window.scrollTo({ top:0, behavior:'smooth' });
+  }
+
+  // ── Form Submit ───────────────────────────────────────────────────────────────
+  document.getElementById('regForm').addEventListener('submit', function(e) {
+    e.preventDefault();
+    if (!validate()) return;
+    const data = getFormData();
+    document.getElementById('submitBtn').disabled = true;
+    if (data.price === 0) {
+      submitToGoogleForm(data, null);
+      handleFreeRegistration(data);
+    } else {
+      initiateRazorpay(data);
+    }
+  });
+
+  // ── Clear errors on input ─────────────────────────────────────────────────────
+  ['name','phone','email','college','teamName'].forEach(id=>{
+    document.getElementById(id).addEventListener('input', function(){
+      this.classList.remove('error');
+      const errEl = document.getElementById(id.replace('N','n').replace('P','p')+'Err');
+      if (errEl) errEl.style.display='none';
+    });
+  });
+  document.getElementById('phone').addEventListener('input',function(){
+    this.value=this.value.replace(/\D/g,'').slice(0,10);
+  });
+</script>
+</body>
+</html>
