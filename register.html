@@ -440,7 +440,9 @@
     selectedSubCatEl = document.querySelector('#roboWarSubs .sub-opt.selected');
     price = parseInt(selectedSubCatEl.dataset.price);
   }
-
+  if (evt === 'robo-soccer' || evt === 'open-innovation') {
+    selectedSubCatEl = null; // reset sub-category selection  
+  }
   // ✅ SHOW / HIDE PROJECT FIELD
   const projectField = document.getElementById('projectTitleGroup');
   if (evt === 'open-innovation') {
@@ -697,6 +699,9 @@ function submitToGoogleForm(data, paymentId) {
     extraInfo = data.projectTitle 
       ? ` (Project: ${data.projectTitle})`
       : '';
+  } else if (eventName.includes('robo soccer')) {
+    // 🤖 For Robo Soccer, show no category 
+     extraInfo = ''
   } else {
     extraInfo = data.category ? ` (${data.category})` : '';
   }
