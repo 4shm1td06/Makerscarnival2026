@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Register — Makers Carnival 2025</title>
+<title>Register — Makers Carnival 2026</title>
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=IBM+Plex+Mono:wght@400;600&family=Space+Grotesk:wght@300;400;500;700&display=swap" rel="stylesheet">
 <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
 <style>
@@ -282,19 +282,19 @@
             <div class="event-name">Robo War</div>
             <div class="event-desc">Combat robotics — choose your weight class</div>
           </div>
-          <div class="event-price" id="roboWarPrice">₹1000</div>
+          <div class="event-price" id="roboWarPrice">₹1200/1600</div>
         </div>
         <!-- Sub categories -->
         <div class="sub-options" id="roboWarSubs">
-          <div class="sub-opt selected" data-cat="8kg" data-price="1000" onclick="selectSubCat(this, event)">
+          <div class="sub-opt selected" data-cat="8kg" data-price="1200" onclick="selectSubCat(this, event)">
           <input type="radio" name="robowar-cat" value="8kg" checked>
             <label>8 kg Category</label>
-            <span>₹1,000</span>
+            <span>₹1,200</span>
           </div>
-          <div class="sub-opt" data-cat="15kg" data-price="1000" onclick="selectSubCat(this, event)">
-          <input type="radio" name="robowar-cat" value="15kg">
+          <div class="sub-opt" data-cat="15kg" data-price="1600" onclick="selectSubCat(this, event)">
+          <input type="radio" name="robowar-cat" value="15kg" >
             <label>15 kg Category</label>
-            <span>₹1,000</span>
+            <span>₹1,600</span>
           </div>
         </div>
       </div>
@@ -317,7 +317,7 @@
     <!-- Info strip -->
     <div style="margin-top:2rem; padding:1rem 1.2rem; border:1px solid var(--border); background:var(--bg2);">
       <p style="font-family:'IBM Plex Mono',monospace; font-size:0.62rem; letter-spacing:0.12em; color:var(--muted); line-height:1.8;">
-        📅 Jan 29–30, 2025 &nbsp;·&nbsp; JECRC University, Jaipur<br>
+        📅 Apr 3-4, 2026 &nbsp;·&nbsp; JECRC University, Jaipur<br>
         🔒 Secure payments via Razorpay<br>
         ✉️ Confirmation sent to your email
       </p>
@@ -361,6 +361,10 @@
         <input type="text" id="teamName" placeholder="Circuit Breakers" autocomplete="off">
         <p class="error-msg" id="teamErr">Please enter a team name</p>
       </div>
+     <div class="form-group" id="projectTitleGroup" style="display: none;">
+        <label>Project Title (for Open Innovation)</label>
+        <input type="text" id="projectTitle" placeholder="Smart Cane for the Visually Impaired" autocomplete="off">
+      </div>
 
       <!-- Team Members -->
       <div class="team-section">
@@ -396,7 +400,7 @@
 
     <p class="form-notice">
       Payments processed securely by Razorpay.<br>
-      Confirm on <strong>makers-carnival@jecrc.ac.in</strong> for queries.
+      Email on <strong>Ju.makerspace@jecrcu.edu.in</strong> for queries.
     </p>
   </div>
 </main>
@@ -424,20 +428,31 @@
 
   // ── Event Selection ──────────────────────────────────────────────────────────
   function selectEvent(el) {
-    document.querySelectorAll('.event-option').forEach(e=>e.classList.remove('selected'));
-    el.classList.add('selected');
-    const evt   = el.dataset.event;
-    const eName = el.dataset.name;
-    let price   = parseInt(el.dataset.price);
+  document.querySelectorAll('.event-option').forEach(e => e.classList.remove('selected'));
+  el.classList.add('selected');
 
-    if (evt === 'robo-war') {
-      selectedSubCatEl = document.querySelector('#roboWarSubs .sub-opt.selected');
-      price = parseInt(selectedSubCatEl.dataset.price);
-    }
+  const evt   = el.dataset.event;
+  const eName = el.dataset.name;
+  let price   = parseInt(el.dataset.price);
 
-    selectedEvent = { event: evt, name: eName, price };
-    updateSummary();
+  // ✅ Handle Robo War pricing
+  if (evt === 'robo-war') {
+    selectedSubCatEl = document.querySelector('#roboWarSubs .sub-opt.selected');
+    price = parseInt(selectedSubCatEl.dataset.price);
   }
+
+  // ✅ SHOW / HIDE PROJECT FIELD
+  const projectField = document.getElementById('projectTitleGroup');
+  if (evt === 'open-innovation') {
+    projectField.style.display = 'block';
+  } else {
+    projectField.style.display = 'none';
+  }
+
+  selectedEvent = { event: evt, name: eName, price };
+
+  updateSummary();
+}
 
   function selectSubCat(el, e) {
     e.stopPropagation();
@@ -530,6 +545,7 @@
       phone:    document.getElementById('phone').value.trim(),
       college:  document.getElementById('college').value.trim(),
       teamName: document.getElementById('teamName').value.trim(),
+      projecttitle: document.getElementById('projectTitle').value.trim(),
       members,
       event:    selectedEvent.name,
       category: selectedSubCatEl ? selectedSubCatEl.dataset.cat : '',
@@ -537,86 +553,135 @@
     };
   }
 
-  // ── Free Registration Flow ────────────────────────────────────────────────────
-  function handleFreeRegistration(data) {
-    // TODO: Replace with your Google Form prefill URL
-    // Example: https://docs.google.com/forms/d/e/YOUR_FORM_ID/viewform?usp=pp_url&entry.123=Name&entry.456=Email
-    const googleFormBase = 'YOUR_GOOGLE_FORM_PREFILL_URL';
+ // ─────────────────────────────────────────────────────────────
+// ✅ CONFIG — REPLACE THESE ONCE
+// ─────────────────────────────────────────────────────────────
 
-    showSuccess(data, null);
+// 👉 Your Google Form ID (already correct)
+const FORM_ID = '1FAIpQLSfNDKD6LVPWtzax7Nh4L4Z2HFX4Q9maUZsevlOpX7WCPG4jLg';
 
-    // Uncomment and configure once you have your Google Form URL:
-    // const params = new URLSearchParams({
-    //   'entry.FIELD_ID_NAME': data.name,
-    //   'entry.FIELD_ID_EMAIL': data.email,
-    //   'entry.FIELD_ID_PHONE': data.phone,
-    //   'entry.FIELD_ID_COLLEGE': data.college,
-    //   'entry.FIELD_ID_TEAM': data.teamName,
-    //   'entry.FIELD_ID_EVENT': data.event,
-    // });
-    // window.open(googleFormBase + '?' + params.toString(), '_blank');
-  }
+// 👉 URLs
+const GOOGLE_FORM_VIEW = `https://docs.google.com/forms/d/e/${FORM_ID}/viewform?usp=pp_url`;
+const GOOGLE_FORM_ACTION = `https://docs.google.com/forms/d/e/${FORM_ID}/formResponse`;
 
-  // ── Razorpay Payment Flow ─────────────────────────────────────────────────────
-  function initiateRazorpay(data) {
-    const options = {
-      // ⚠️ REPLACE with your live key before going live: rzp_live_XXXXXXXXXXXXXXXX
-      key: 'rzp_test_REPLACE_WITH_YOUR_KEY',
+// 👉 ⚠️ REPLACE THESE ENTRY IDs FROM YOUR FORM
+const ENTRY_IDS = {
+  name:     'entry.2092238618',
+  email:    'entry.1556369182',
+  phone:    'entry.479301265',
+  college:  'entry.756518909',
+  team:     'entry.168494097',
+  event:    'entry.1578485876',
+  category: 'entry.1670561038',
+  projecttitle: 'entry.208229991',
+  payment:  'entry.1997554548',
+  members:  'entry.1866121611' // <-- REPLACE with your actual entry ID for team members
+};
 
-      amount: data.price * 100,          // Razorpay takes paise
-      currency: 'INR',
-      name: 'Makers Carnival 2025',
-      description: data.event + (data.category ? ' — ' + data.category : ''),
-      image: '',                          // Optional: your logo URL
-      prefill: {
-        name:    data.name,
-        email:   data.email,
-        contact: data.phone,
-      },
-      notes: {
-        college:   data.college,
-        team_name: data.teamName,
-        event:     data.event,
-        category:  data.category,
-        members:   data.members.join(', '),
-      },
-      theme: { color: '#d94f00' },
-      modal: { ondismiss: function(){ document.getElementById('submitBtn').disabled=false; } },
-      handler: function(response) {
-        // Payment successful — send to Google Sheets via Form
-        submitToGoogleForm(data, response.razorpay_payment_id);
-        showSuccess(data, response.razorpay_payment_id);
+
+// ─────────────────────────────────────────────────────────────
+// 🎉 SUCCESS UI
+// ─────────────────────────────────────────────────────────────
+function showSuccess(data, paymentId) {
+  alert(
+    `✅ Registration Successful!\n\n` +
+    `Name: ${data.name}\n` +
+    `Event: ${data.event}\n` +
+    `Payment: ${paymentId || 'FREE'}`
+  );
+}
+
+
+// ─────────────────────────────────────────────────────────────
+// 🆓 FREE REGISTRATION FLOW
+// ─────────────────────────────────────────────────────────────
+function handleFreeRegistration(data) {
+  // 🚀 Submit silently (no redirect)
+  submitToGoogleForm(data, 'FREE');
+
+  // ✅ Show success on your site
+  showSuccess(data, null);
+}
+
+
+// ─────────────────────────────────────────────────────────────
+// 💳 RAZORPAY PAYMENT FLOW
+// ─────────────────────────────────────────────────────────────
+function initiateRazorpay(data) {
+  const options = {
+    key: 'rzp_live_SWEJcjyF6Gek5R', // ⚠️ replace if needed
+
+    amount: data.price * 100,
+    currency: 'INR',
+
+    name: 'Makers Carnival 2025',
+    description: data.event + (data.category ? ' — ' + data.category : ''),
+
+    prefill: {
+      name: data.name,
+      email: data.email,
+      contact: data.phone,
+    },
+
+    notes: {
+      college: data.college,
+      team_name: data.teamName,
+      event: data.event,
+      category: data.category,
+      members: data.members.join(', ')
+    },
+
+    theme: { color: '#d94f00' },
+
+    modal: {
+      ondismiss: function () {
+        document.getElementById('submitBtn').disabled = false;
       }
-    };
-    const rzp = new Razorpay(options);
-    rzp.on('payment.failed', function(resp){
-      alert('Payment failed: ' + resp.error.description);
-      document.getElementById('submitBtn').disabled = false;
-    });
-    rzp.open();
-  }
+    },
 
-  // ── Google Form Submission ────────────────────────────────────────────────────
-  function submitToGoogleForm(data, paymentId) {
-    // TODO: Replace entry IDs with your actual Google Form field IDs
-    // Get them from: Right-click field in Google Form → Inspect → find name="entry.XXXXXXXXX"
-    const FORM_ACTION = 'https://docs.google.com/forms/d/e/YOUR_FORM_ID/formResponse';
+    handler: function (response) {
+      // ✅ Payment success
+      submitToGoogleForm(data, response.razorpay_payment_id);
+      showSuccess(data, response.razorpay_payment_id);
+    }
+  };
 
-    const body = new URLSearchParams({
-      'entry.REPLACE_NAME_ID':     data.name,
-      'entry.REPLACE_EMAIL_ID':    data.email,
-      'entry.REPLACE_PHONE_ID':    data.phone,
-      'entry.REPLACE_COLLEGE_ID':  data.college,
-      'entry.REPLACE_TEAM_ID':     data.teamName,
-      'entry.REPLACE_EVENT_ID':    data.event,
-      'entry.REPLACE_CAT_ID':      data.category || 'N/A',
-      'entry.REPLACE_MEMBERS_ID':  data.members.join(', ') || 'Solo',
-      'entry.REPLACE_PAYMENT_ID':  paymentId || 'FREE',
-    });
+  const rzp = new Razorpay(options);
 
-    // Submit silently (Google Forms ignores CORS so we use no-cors)
-    fetch(FORM_ACTION, { method:'POST', mode:'no-cors', body }).catch(()=>{});
-  }
+  rzp.on('payment.failed', function (resp) {
+    alert('❌ Payment failed: ' + resp.error.description);
+    document.getElementById('submitBtn').disabled = false;
+  });
+
+  rzp.open();
+}
+
+
+// ─────────────────────────────────────────────────────────────
+// 📩 GOOGLE FORM SUBMISSION (WORKING)
+// ─────────────────────────────────────────────────────────────
+function submitToGoogleForm(data, paymentId) {
+  const body = new URLSearchParams({
+    [ENTRY_IDS.name]: data.name,
+    [ENTRY_IDS.email]: data.email,
+    [ENTRY_IDS.phone]: data.phone,
+    [ENTRY_IDS.college]: data.college,
+    [ENTRY_IDS.team]: data.teamName,
+    [ENTRY_IDS.event]: data.event,
+    [ENTRY_IDS.category]: data.category || 'N/A',
+    [ENTRY_IDS.members]: data.members?.join(', ') || 'Solo',
+    [ENTRY_IDS.payment]: paymentId || 'FREE',
+    [ENTRY_IDS.projecttitle]: data.projecttitle || 'N/A' 
+  });
+
+  fetch(GOOGLE_FORM_ACTION, {
+    method: 'POST',
+    mode: 'no-cors',
+    body
+  }).catch(() => {
+    // silent fail (Google Forms doesn't return response)
+  });
+}
 
   // ── Show Success ──────────────────────────────────────────────────────────────
   function showSuccess(data, paymentId) {
@@ -636,9 +701,8 @@
     if (!validate()) return;
     const data = getFormData();
     document.getElementById('submitBtn').disabled = true;
-    if (data.price === 0) {
-      submitToGoogleForm(data, null);
-      handleFreeRegistration(data);
+   if (data.price === 0) {
+  handleFreeRegistration(data);
     } else {
       initiateRazorpay(data);
     }
