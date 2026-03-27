@@ -245,7 +245,7 @@
   <div class="success-icon">✦</div>
   <h1 class="success-title">You're In!</h1>
   <p class="success-sub">Registration Confirmed</p>
-  <p class="success-detail" id="successDetail">Your spot at Makers Carnival 2025 is locked in. See you on January 29–30 at JECRC University, Jaipur.</p>
+  <p class="success-detail" id="successDetail">Your spot at Makers Carnival 2026 is locked in. See you on April 3–4 at JECRC University, Jaipur.</p>
   <p class="success-ref" id="successRef"></p>
   <a href="index.html" class="success-back">Back to Home</a>
 </div>
@@ -545,7 +545,7 @@
       phone:    document.getElementById('phone').value.trim(),
       college:  document.getElementById('college').value.trim(),
       teamName: document.getElementById('teamName').value.trim(),
-      projecttitle: document.getElementById('projectTitle').value.trim(),
+      projectTitle: document.getElementById('projectTitle').value.trim(),
       members,
       event:    selectedEvent.name,
       category: selectedSubCatEl ? selectedSubCatEl.dataset.cat : '',
@@ -573,9 +573,10 @@ const ENTRY_IDS = {
   team:     'entry.168494097',
   event:    'entry.1578485876',
   category: 'entry.1670561038',
-  projecttitle: 'entry.208229991',
+  projectTitle: 'entry.208229991',
   payment:  'entry.1997554548',
-  members:  'entry.1866121611' // <-- REPLACE with your actual entry ID for team members
+  members:  'entry.1866121611',
+  payment:  'entry.356866430'
 };
 
 
@@ -609,12 +610,13 @@ function handleFreeRegistration(data) {
 // ─────────────────────────────────────────────────────────────
 function initiateRazorpay(data) {
   const options = {
-    key: 'rzp_live_SWEJcjyF6Gek5R', // ⚠️ replace if needed
+    key: 'rzp_live_SWEJcjyF6Gek5R',
+    // key: 'rzp_test_STTZKLmIdrBl4e',
 
     amount: data.price * 100,
     currency: 'INR',
 
-    name: 'Makers Carnival 2025',
+    name: 'Makers Carnival 2026',
     description: data.event + (data.category ? ' — ' + data.category : ''),
 
     prefill: {
@@ -671,7 +673,7 @@ function submitToGoogleForm(data, paymentId) {
     [ENTRY_IDS.category]: data.category || 'N/A',
     [ENTRY_IDS.members]: data.members?.join(', ') || 'Solo',
     [ENTRY_IDS.payment]: paymentId || 'FREE',
-    [ENTRY_IDS.projecttitle]: data.projecttitle || 'N/A' 
+    [ENTRY_IDS.projectTitle]: data.projectTitle || 'N/A' 
   });
 
   fetch(GOOGLE_FORM_ACTION, {
@@ -685,15 +687,30 @@ function submitToGoogleForm(data, paymentId) {
 
   // ── Show Success ──────────────────────────────────────────────────────────────
   function showSuccess(data, paymentId) {
-    const overlay = document.getElementById('successOverlay');
-    document.getElementById('successDetail').textContent =
-      `Hey ${data.name}! Your registration for ${data.event}${data.category?' ('+data.category+')':''} is confirmed. See you on Jan 29–30 at JECRC University, Jaipur.`;
-    if (paymentId) {
-      document.getElementById('successRef').textContent = 'Payment ID: ' + paymentId;
-    }
-    overlay.classList.add('show');
-    window.scrollTo({ top:0, behavior:'smooth' });
+  const overlay = document.getElementById('successOverlay');
+
+  let extraInfo = '';
+  const eventName = (data.event || '').toLowerCase().trim();
+
+  if (eventName.includes('open')) {
+    // 🔥 Always ignore category for Open Innovation
+    extraInfo = data.projectTitle 
+      ? ` (Project: ${data.projectTitle})`
+      : '';
+  } else {
+    extraInfo = data.category ? ` (${data.category})` : '';
   }
+
+  document.getElementById('successDetail').textContent =
+    `Hey ${data.name}! Your registration for ${data.event}${extraInfo} is confirmed. See you on Apr 3–4 at JECRC University, Jaipur.`;
+
+  if (paymentId) {
+    document.getElementById('successRef').textContent = 'Payment ID: ' + paymentId;
+  }
+
+  overlay.classList.add('show');
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
 
   // ── Form Submit ───────────────────────────────────────────────────────────────
   document.getElementById('regForm').addEventListener('submit', function(e) {
