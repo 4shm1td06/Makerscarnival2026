@@ -278,43 +278,142 @@
   .about-text strong { color: var(--ink); }
 
   /* EVENTS */
-  #events { border-top: 1px solid var(--border); }
+/* EVENTS */
+#events {
+  border-top: 1px solid var(--border);
+}
+
+.events-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1px;
+  background: var(--border);
+  margin-top: 3rem;
+  border: 1px solid var(--border);
+}
+
+/* Allow manual grid-column spans */
+.event-card {
+  background: var(--bg);
+  padding: 2.5rem 2rem;
+  position: relative;
+  overflow: hidden;
+  transition: background 0.3s;
+}
+
+.event-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 3px;
+  height: 100%;
+  background: var(--orange);
+  transform: scaleY(0);
+  transform-origin: bottom;
+  transition: transform 0.3s;
+}
+
+.event-card:hover {
+  background: var(--bg2);
+}
+
+.event-card:hover::before {
+  transform: scaleY(1);
+}
+
+.event-number {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 4rem;
+  color: rgba(17, 17, 16, 0.05);
+  position: absolute;
+  top: 1rem;
+  right: 1.5rem;
+  line-height: 1;
+  pointer-events: none;
+  transition: color 0.3s;
+}
+
+.event-card:hover .event-number {
+  color: rgba(217, 79, 0, 0.09);
+}
+
+.event-icon {
+  font-size: 1.8rem;
+  margin-bottom: 1.4rem;
+  display: block;
+}
+
+.event-card h3 {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 1.55rem;
+  letter-spacing: 0.04em;
+  margin-bottom: 0.7rem;
+  color: var(--ink);
+  line-height: 1.1;
+}
+
+.event-card p {
+  font-size: 0.86rem;
+  color: var(--muted);
+  line-height: 1.7;
+}
+
+.event-tag {
+  display: inline-block;
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 0.58rem;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: var(--orange);
+  border: 1px solid rgba(217, 79, 0, 0.3);
+  padding: 0.2rem 0.6rem;
+  margin-top: 1.2rem;
+}
+
+/* --- RESPONSIVE --- */
+@media (max-width: 1024px) {
   .events-grid {
-    display: grid; grid-template-columns: repeat(3, 1fr);
-    gap: 1px; background: var(--border);
-    margin-top: 3rem; border: 1px solid var(--border);
+    grid-template-columns: repeat(2, 1fr);
+    margin-top: 2.5rem;
   }
-  .event-card {
-    background: var(--bg); padding: 2.5rem 2rem;
-    position: relative; overflow: hidden; transition: background 0.3s;
-  }
-  .event-card::before {
-    content: ''; position: absolute; top:0; left:0;
-    width: 3px; height: 100%; background: var(--orange);
-    transform: scaleY(0); transform-origin: bottom; transition: transform 0.3s;
-  }
-  .event-card:hover { background: var(--bg2); }
-  .event-card:hover::before { transform: scaleY(1); }
-  .event-number {
-    font-family: 'Bebas Neue', sans-serif; font-size: 4rem;
-    color: rgba(17,17,16,0.05); position: absolute; top:1rem; right:1.5rem;
-    line-height: 1; pointer-events: none; transition: color 0.3s;
-  }
-  .event-card:hover .event-number { color: rgba(217,79,0,0.09); }
-  .event-icon { font-size: 1.8rem; margin-bottom: 1.4rem; display: block; }
-  .event-card h3 {
-    font-family: 'Bebas Neue', sans-serif; font-size: 1.55rem;
-    letter-spacing: 0.04em; margin-bottom: 0.7rem; color: var(--ink); line-height: 1.1;
-  }
-  .event-card p { font-size: 0.86rem; color: var(--muted); line-height: 1.7; }
-  .event-tag {
-    display: inline-block;
-    font-family: 'IBM Plex Mono', monospace;
-    font-size: 0.58rem; letter-spacing: 0.15em; text-transform: uppercase;
-    color: var(--orange); border: 1px solid rgba(217,79,0,0.3);
-    padding: 0.2rem 0.6rem; margin-top: 1.2rem;
+}
+
+@media (max-width: 600px) {
+  .events-grid {
+    grid-template-columns: 1fr;
+    margin-top: 2rem;
   }
 
+  /* Override grid-column spans for single-column layout */
+  .event-card {
+    grid-column: span 1 !important;
+    padding: 2rem 1.5rem;
+  }
+
+  .event-number {
+    font-size: 3rem;
+    top: 0.5rem;
+    right: 1rem;
+  }
+
+  .event-card h3 {
+    font-size: 1.35rem;
+  }
+
+  .event-card p {
+    font-size: 0.8rem;
+  }
+
+  .event-icon {
+    font-size: 1.5rem;
+  }
+
+  .event-tag {
+    font-size: 0.5rem;
+    padding: 0.15rem 0.5rem;
+  }
+}
   /* EDITIONS */
   #editions { border-top: 1px solid var(--border); background: var(--bg3); }
   .editions-flex { display: flex; gap: 2rem; margin-top: 3rem; }
@@ -592,14 +691,16 @@
       <p>Fun and engaging activities for all ages. Test your skills in a variety of mini-games designed to challenge and entertain.</p>
       <span class="event-tag">Fun Zone</span>
      </div>
-  </div>
-    <div class="event-card" style="grid-column: span 2;">
+
+     <div class="event-card" style="grid-column: span 3;">
       <span class="event-number">06</span>
       <span class="event-icon">🎵</span>
       <h3>Jam Session Finale</h3>
       <p>Every Makers Carnival ends the way it should — with music, celebration, and the collective energy of a community that built something remarkable together. The Jam Session is where the maker spirit takes centre stage.</p>
       <span class="event-tag">Evening Closing</span>
     </div>
+  </div>
+    
    
 </section>
 
@@ -675,7 +776,7 @@
     <li><a href="#events">Events</a></li>
     <li><a href="#editions">Editions</a></li>
     <li><a href="/register.html">Register</a></li>
-    <li><a href="mailto:Ju.makerspace.jecrcu.edu.in">Contact</a></li>
+    <li><a href="mailto:Ju.makerspace@jecrcu.edu.in">Contact</a></li>
   </ul>
   <p class="footer-copy">© 2016 JU Makerspace, JECRC University</p>
 </footer>
