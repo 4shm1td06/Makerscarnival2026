@@ -261,7 +261,7 @@
     <div class="event-cards" id="eventCards">
 
       <!-- Robo Soccer -->
-      <div class="event-option" data-event="robo-soccer" data-price="600" data-name="Robo Soccer" onclick="selectEvent(this)">
+      <div class="event-option" data-event="robo-soccer" data-price="800" data-name="Robo Soccer" onclick="selectEvent(this)">
       <input type="radio" name="event" value="robo-soccer">
         <div class="event-check"></div>
         <div class="event-option-top" style="padding-right:1.5rem;">
@@ -269,33 +269,32 @@
             <div class="event-name">Robo Soccer</div>
             <div class="event-desc">Autonomous bot football — best team wins</div>
           </div>
-          <div class="event-price">₹600</div>
+          <div class="event-price">₹800</div>
         </div>
       </div>
 
       <!-- Robo War -->
-      <div class="event-option" data-event="robo-war" data-price="0" data-name="Robo War" onclick="selectEvent(this)">
+      <div class="event-option" data-event="robo-war" data-price="1200" data-name="Robo War" onclick="selectEvent(this)">
       <input type="radio" name="event" value="robo-war">
         <div class="event-check"></div>
         <div class="event-option-top" style="padding-right:1.5rem;">
           <div>
             <div class="event-name">Robo War</div>
-            <div class="event-desc">Combat robotics — choose your weight class</div>
+            <div class="event-desc">Combat robotics — 3 lbs</div>
           </div>
-          <div class="event-price" id="roboWarPrice">₹1200/1600</div>
+          <div class="event-price" id="roboWarPrice">₹1200</div>
         </div>
-        <!-- Sub categories -->
-        <div class="sub-options" id="roboWarSubs">
-          <div class="sub-opt selected" data-cat="8kg" data-price="1200" onclick="selectSubCat(this, event)">
-          <input type="radio" name="robowar-cat" value="8kg" checked>
-            <label>8 kg Category</label>
-            <span>₹1,200</span>
+      </div>
+      <!-- LFR-->
+    <div class="event-option" data-event="line-following-robot" data-price="500" data-name="Line Following Robot" onclick="selectEvent(this)">
+      <input type="radio" name="event" value="line-following-robot">
+        <div class="event-check"></div>
+        <div class="event-option-top" style="padding-right:1.5rem;">
+          <div>
+            <div class="event-name">Line Following Robot</div>
+            <div class="event-desc">Navigate the track — speed and precision</div>
           </div>
-          <div class="sub-opt" data-cat="15kg" data-price="1600" onclick="selectSubCat(this, event)">
-          <input type="radio" name="robowar-cat" value="15kg" >
-            <label>15 kg Category</label>
-            <span>₹1,600</span>
-          </div>
+          <div class="event-price">₹500</div>
         </div>
       </div>
 
@@ -437,8 +436,8 @@
 
   // ✅ Handle Robo War pricing
   if (evt === 'robo-war') {
-    selectedSubCatEl = document.querySelector('#roboWarSubs .sub-opt.selected');
-    price = parseInt(selectedSubCatEl.dataset.price);
+    selectedSubCatEl = null; // reset sub-category selection
+    
   }
   if (evt === 'robo-soccer' || evt === 'open-innovation') {
     selectedSubCatEl = null; // reset sub-category selection  
@@ -612,8 +611,8 @@ function handleFreeRegistration(data) {
 // ─────────────────────────────────────────────────────────────
 function initiateRazorpay(data) {
   const options = {
-    key: 'rzp_live_SWEJcjyF6Gek5R',
-    // key: 'rzp_test_STTZKLmIdrBl4e',
+ key: 'rzp_live_SWEJcjyF6Gek5R',
+// key: 'rzp_test_STTZKLmIdrBl4e',
 
     amount: data.price * 100,
     currency: 'INR',
