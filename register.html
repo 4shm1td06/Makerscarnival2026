@@ -122,7 +122,18 @@
   .sub-opt label { font-family:'IBM Plex Mono',monospace; font-size:0.72rem; letter-spacing:0.08em; text-transform:uppercase; color:var(--ink); cursor:none; }
   .sub-opt span { font-family:'IBM Plex Mono',monospace; font-size:0.72rem; color:var(--orange); font-weight:600; }
   .sub-opt input[type="radio"] { display:none; }
-
+  /*Price Pool */
+  .price-pool {
+    display: inline-block;
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 0.58rem;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: var(--orange);
+  border: 1px solid rgba(217, 79, 0, 0.3);
+  padding: 0.2rem 0.6rem;
+  margin-top: 1.2rem;
+  }
   /* FORM PANEL */
   .form-panel {
     background:var(--bg2);
@@ -268,6 +279,7 @@
           <div>
             <div class="event-name">Robo Soccer</div>
             <div class="event-desc">Autonomous bot football — best team wins</div>
+            <div class="price-pool">Prize Pool ₹11K+</div>
           </div>
           <div class="event-price">₹800</div>
         </div>
@@ -281,6 +293,7 @@
           <div>
             <div class="event-name">Robo War</div>
             <div class="event-desc">Combat robotics — 3 lbs</div>
+          <div class="price-pool" id="roboWarPool">Prize Pool ₹20K+</div>
           </div>
           <div class="event-price" id="roboWarPrice">₹1200</div>
         </div>
@@ -293,6 +306,7 @@
           <div>
             <div class="event-name">Line Following Robot</div>
             <div class="event-desc">Navigate the track — speed and precision</div>
+            <div class="price-pool">Prize Pool ₹5K+</div>
           </div>
           <div class="event-price">₹500</div>
         </div>
@@ -306,6 +320,7 @@
           <div>
             <div class="event-name">Open Innovation</div>
             <div class="event-desc">Present your idea — open to all builders</div>
+            <div class="price-pool">Prize Pool ₹47K+</div>
           </div>
           <div class="event-price free-price">FREE</div>
         </div>
