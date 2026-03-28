@@ -13,6 +13,7 @@
     --ink:    #111110;
     --ink2:   #2a2a28;
     --orange: #d94f00;
+    --yellow: #f5a623;
     --muted:  #7a7a72;
     --border: rgba(17,17,16,0.12);
   }
@@ -99,7 +100,7 @@
   display: flex;
   justify-content: center; /* Centers horizontally */
   align-items: center;     /* Centers vertically */
-  min-height: 100vh;       /* Gives it space to center within (optional) */
+  min-height: 80vh;       /* Gives it space to center within (optional) */
   text-align: center;      /* Backup for older browsers */
 }
   @keyframes heroReveal {
@@ -111,6 +112,10 @@
   max-width: 100%;         /* Ensures the image doesn't overflow */
   height: auto;
   animation: heroFloat 7s ease-in-out infinite;
+  }
+  .bg-img{
+    position: absolute; top: 0; left: 14%; width: 75%; height: 100%; opacity: 0.55;
+    object-fit: cover;
   }
   .left-img {
     height: 90%;      
@@ -208,7 +213,27 @@
     from { transform: translateX(0); }
     to   { transform: translateX(-50%); }
   }
+  /* BLINKER */
+  .blinker {
+    display: inline-block;
+    color: var(--yellow);
+    font-weight: bold;
+    font-size: 3rem;
+    animation: blink 1s infinite;
+    text-align: center;
+    margin-top: 0.5rem;
+  }
 
+  @keyframes blink {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0; }
+  }
+
+  .blinker-container {
+    text-align: center;
+    margin-top: 1.5rem;
+    bottom: 200px;
+  }
   /* SECTIONS */
   section { padding: 6rem 3rem; }
   .section-tag {
@@ -565,8 +590,13 @@
     <img src="/jecrc.png" alt="Maker's Carnival 5th Edition" class="hero-img" />
   </div>
   <div style="position:relative; z-index:1;">
+    <img src="/bg.png" alt="Background Shape" class="bg-img" />
     <div class="hero-img-wrap align-center">
       <img src="/web.png" alt="Maker's Carnival 5th Edition" class="hero-img" />
+    </div>
+
+    <div class="blinker-container">
+      <div class="blinker">Exciting Prizes Upto ₹1,00,000+</div>
     </div>
     <div class="hero-meta">
       <div class="hero-meta-item">
@@ -691,7 +721,6 @@
       <p>Fun and engaging activities for all ages. Test your skills in a variety of mini-games designed to challenge and entertain.</p>
       <span class="event-tag">Fun Zone</span>
      </div>
-
      <div class="event-card" style="grid-column: span 3;">
       <span class="event-number">06</span>
       <span class="event-icon">🎵</span>
