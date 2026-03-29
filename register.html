@@ -271,6 +271,20 @@
     <span class="event-picker-label">// Select your event</span>
     <div class="event-cards" id="eventCards">
 
+       <!-- Robo War -->
+      <div class="event-option" data-event="robo-war" data-price="1200" data-name="Robo War" onclick="selectEvent(this)">
+      <input type="radio" name="event" value="robo-war">
+        <div class="event-check"></div>
+        <div class="event-option-top" style="padding-right:1.5rem;">
+          <div>
+            <div class="event-name">Robo War</div>
+            <div class="event-desc">Combat robotics — 3 lbs</div>
+          <div class="price-pool" id="roboWarPool">Prize Pool ₹25K+</div>
+          </div>
+          <div class="event-price" id="roboWarPrice">₹1200</div>
+        </div>
+      </div>
+
       <!-- Robo Soccer -->
       <div class="event-option" data-event="robo-soccer" data-price="800" data-name="Robo Soccer" onclick="selectEvent(this)">
       <input type="radio" name="event" value="robo-soccer">
@@ -279,25 +293,12 @@
           <div>
             <div class="event-name">Robo Soccer</div>
             <div class="event-desc">Autonomous bot football — best team wins</div>
-            <div class="price-pool">Prize Pool ₹11K+</div>
+            <div class="price-pool">Prize Pool ₹15K+</div>
           </div>
           <div class="event-price">₹800</div>
         </div>
       </div>
-
-      <!-- Robo War -->
-      <div class="event-option" data-event="robo-war" data-price="1200" data-name="Robo War" onclick="selectEvent(this)">
-      <input type="radio" name="event" value="robo-war">
-        <div class="event-check"></div>
-        <div class="event-option-top" style="padding-right:1.5rem;">
-          <div>
-            <div class="event-name">Robo War</div>
-            <div class="event-desc">Combat robotics — 3 lbs</div>
-          <div class="price-pool" id="roboWarPool">Prize Pool ₹20K+</div>
-          </div>
-          <div class="event-price" id="roboWarPrice">₹1200</div>
-        </div>
-      </div>
+     
       <!-- LFR-->
     <div class="event-option" data-event="line-following-robot" data-price="500" data-name="Line Following Robot" onclick="selectEvent(this)">
       <input type="radio" name="event" value="line-following-robot">
@@ -306,9 +307,23 @@
           <div>
             <div class="event-name">Line Following Robot</div>
             <div class="event-desc">Navigate the track — speed and precision</div>
-            <div class="price-pool">Prize Pool ₹5K+</div>
+            <div class="price-pool">Prize Pool ₹8K+</div>
           </div>
           <div class="event-price">₹500</div>
+        </div>
+      </div>
+
+       <!-- Robo hurrdle -->
+      <div class="event-option" data-event="robo-hurdle" data-price="800" data-name="Robo Hurdle" onclick="selectEvent(this)">
+      <input type="radio" name="event" value="robo-hurdle">
+        <div class="event-check"></div>
+        <div class="event-option-top" style="padding-right:1.5rem;">
+          <div>
+            <div class="event-name">Robo Hurdle</div>
+            <div class="event-desc">Navigate the course — speed and agility</div>
+          <div class="price-pool" id="roboHurdlePool">Prize Pool ₹15K+</div>
+          </div>
+          <div class="event-price" id="roboHurdlePrice">₹800</div>
         </div>
       </div>
 
