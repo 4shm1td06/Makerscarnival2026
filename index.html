@@ -16,6 +16,7 @@
       --ink2: #2a2a28;
       --orange: #d94f00;
       --yellow: #f5a623;
+      --red: #e03c31;
       --muted: #7a7a72;
       --border: rgba(17,17,16,0.12);
 
@@ -270,34 +271,16 @@
       50% { opacity: 0; }
     }
 
-    .hero-meta {
-      display: grid;
-      grid-template-columns: repeat(3, minmax(0, 1fr));
-      gap: 1rem;
-      margin-top: 2rem;
-      opacity: 0;
-      animation: fadeUp 0.8s 1s forwards;
-      position: relative;
-      z-index: 1;
-    }
-
-    .hero-meta-item {
-      padding: 1rem;
-      border: 1px solid var(--border);
-      background: rgba(236,237,232,0.55);
-      backdrop-filter: blur(10px);
-      text-align: center;
-    }
-
-    .hero-meta-item label {
-      font-family: 'IBM Plex Mono', monospace;
-      font-size: 0.62rem;
-      letter-spacing: 0.2em;
-      text-transform: uppercase;
-      color: var(--muted);
-      display: block;
-      margin-bottom: 0.35rem;
-    }
+     .hero-meta {
+    display: flex; gap: 3rem; margin-top: 3rem;
+    opacity: 0; animation: fadeUp 0.8s 1s forwards;
+    position: relative; z-index: 1;
+  }
+  .hero-meta-item label {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 0.62rem; letter-spacing: 0.2em; text-transform: uppercase;
+    color: var(--muted); display: block; margin-bottom: 0.25rem;
+  }
 
     .hero-meta-item span {
       font-size: clamp(0.9rem, 1.3vw, 1rem);
@@ -853,6 +836,16 @@
 
     .footer-brand span { color: var(--orange); }
 
+    .timer {
+  margin-top: 0.8rem;
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: clamp(0.9rem, 2vw, 1.3rem);
+  letter-spacing: 0.12em;
+  color: var(--red);
+  text-align: center;
+  font-weight: 600;
+}
+
     .footer-links {
       display: flex;
       gap: 1rem 2rem;
@@ -1097,11 +1090,20 @@
       
 
       <div class="hero-img-wrap">
-        <img src="/web.png" alt="Maker's Carnival 5th Edition" class="hero-main-logo">
-        <div class="blinker-container">
-          <div class="blinker">Exciting Prizes Upto ₹1,00,000+</div>
-        </div>
-      </div>
+  <img src="/web.png" alt="Maker's Carnival 5th Edition" class="hero-main-logo">
+
+  <div class="blinker-container">
+    <div class="blinker">Exciting Prizes Upto ₹1,00,000+</div>
+  </div>
+
+  <!-- TIMER ADDED -->
+  <div class="timer" id="countdown">
+    <span id="days">00</span>d :
+    <span id="hours">00</span>h :
+    <span id="minutes">00</span>m :
+    <span id="seconds">00</span>s
+  </div>
+</div>
 
       <div class="hero-meta">
         <div class="hero-meta-item">
@@ -1326,7 +1328,36 @@
     </ul>
     <p class="footer-copy">© 2016 JU Makerspace, JECRC University</p>
   </footer>
+<script>
+  // =========================
+  // TIMER CONFIG
+  // =========================
+  // Change this date if needed
+  const targetDate = new Date("Apr 1, 2026 23:59:00").getTime(); // registration end
 
+  function updateTimer() {
+    const now = new Date().getTime();
+    const diff = targetDate - now;
+
+    if (diff <= 0) {
+      document.getElementById("countdown").innerHTML = "Registration Closed ❌";
+      return;
+    }
+
+    const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+    const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+    const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+    const seconds = Math.floor((diff % (1000 * 60)) / 1000);
+
+    document.getElementById("days").innerText = String(days).padStart(2, '0');
+    document.getElementById("hours").innerText = String(hours).padStart(2, '0');
+    document.getElementById("minutes").innerText = String(minutes).padStart(2, '0');
+    document.getElementById("seconds").innerText = String(seconds).padStart(2, '0');
+  }
+
+  setInterval(updateTimer, 1000);
+  updateTimer();
+</script>
   <script>
     const isTouchDevice = window.matchMedia("(pointer: coarse)").matches;
     const cursor = document.getElementById('cursor');

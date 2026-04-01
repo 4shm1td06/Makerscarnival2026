@@ -31,7 +31,25 @@
   /* CURSOR */
   .cursor { width:10px;height:10px;background:var(--orange);border-radius:50%;position:fixed;pointer-events:none;z-index:9999;transition:transform 0.1s; }
   .cursor-ring { width:34px;height:34px;border:1.5px solid var(--ink);border-radius:50%;position:fixed;pointer-events:none;z-index:9998;transition:all 0.15s ease;opacity:0.3; }
+  .rule-btn {
+  display: inline-block;
+  margin-top: 0.8rem;
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 0.6rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--ink);
+  border: 1px solid var(--border);
+  padding: 0.35rem 0.7rem;
+  text-decoration: none;
+  transition: all 0.2s;
+}
 
+.rule-btn:hover {
+  border-color: var(--orange);
+  color: var(--orange);
+  background: rgba(217, 79, 0, 0.05);
+}
   /* NAV */
   nav {
     position: fixed; top:0; width:100%; z-index:100;
@@ -229,7 +247,34 @@
   .success-ref { font-family:'IBM Plex Mono',monospace; font-size:0.7rem; color:var(--muted); margin-top:1rem; letter-spacing:0.1em; }
   .success-back { display:inline-block; margin-top:2rem; font-family:'IBM Plex Mono',monospace; font-size:0.72rem; letter-spacing:0.12em; text-transform:uppercase; background:var(--ink); color:var(--bg); padding:0.9rem 2rem; text-decoration:none; transition:background 0.2s; }
   .success-back:hover { background:var(--orange); }
-
+  /* TIMER */
+  .countdown-box{
+    margin:1.5rem 0 2rem;
+    padding:1rem 1.2rem;
+    border:1px solid var(--border);
+    background:var(--bg2);
+  }
+  
+  .timer-label{
+    font-family:'IBM Plex Mono',monospace;
+    font-size:0.6rem;
+    letter-spacing:0.18em;
+    text-transform:uppercase;
+    color:var(--muted);
+    margin-bottom:0.6rem;
+  }
+  
+  .timer{
+    font-family:'Bebas Neue',sans-serif;
+    font-size:2rem;
+    letter-spacing:0.08em;
+    color:var(--ink);
+  }
+  
+  .timer span{
+    color:var(--orange);
+  }
+  
   /* RESPONSIVE */
   @media(max-width:900px) {
     nav { padding:1rem 1.5rem; }
@@ -267,6 +312,13 @@
     <p class="section-tag">// Step 01 — Choose Event</p>
     <h1 class="page-title">Register<br>for<br>Carnival</h1>
     <p class="page-desc">Pick your arena, fill in your details, and secure your spot at North India's most anticipated student-maker event.</p>
+    <!-- TIMER -->
+     <div class="countdown-box">
+      <p class="timer-label">// Registration closes in</p>
+      <div class="timer" id="countdown">
+        00d 00h 00m 00s
+      </div>
+    </div>
 
     <span class="event-picker-label">// Select your event</span>
     <div class="event-cards" id="eventCards">
@@ -280,6 +332,9 @@
             <div class="event-name">Robo War</div>
             <div class="event-desc">Combat robotics — 3 lbs</div>
           <div class="price-pool" id="roboWarPool">Prize Pool ₹25K+</div>
+          <a href="/ROBOWAR.pdf" target="_blank" class="rule-btn" onclick="event.stopPropagation()">
+            Rulebook
+          </a>
           </div>
           <div class="event-price" id="roboWarPrice">₹1200</div>
         </div>
@@ -294,6 +349,9 @@
             <div class="event-name">Robo Soccer</div>
             <div class="event-desc">Autonomous bot football — best team wins</div>
             <div class="price-pool">Prize Pool ₹15K+</div>
+            <a href="/robo_soccer_rules.pdf" target="_blank" class="rule-btn" onclick="event.stopPropagation()">
+            Rulebook
+          </a>
           </div>
           <div class="event-price">₹800</div>
         </div>
@@ -308,6 +366,9 @@
             <div class="event-name">Line Following Robot</div>
             <div class="event-desc">Navigate the track — speed and precision</div>
             <div class="price-pool">Prize Pool ₹8K+</div>
+            <a href="/LFR.pdf" target="_blank" class="rule-btn" onclick="event.stopPropagation()">
+            Rulebook
+          </a>
           </div>
           <div class="event-price">₹500</div>
         </div>
@@ -322,6 +383,9 @@
             <div class="event-name">Robo Hurdle</div>
             <div class="event-desc">Navigate the course — speed and agility</div>
           <div class="price-pool" id="roboHurdlePool">Prize Pool ₹15K+</div>
+          <a href="/robo_hurdle_rules.pdf" target="_blank" class="rule-btn" onclick="event.stopPropagation()">
+            Rulebook
+          </a>
           </div>
           <div class="event-price" id="roboHurdlePrice">₹800</div>
         </div>
@@ -336,6 +400,7 @@
             <div class="event-name">Open Innovation</div>
             <div class="event-desc">Present your idea — open to all builders</div>
             <div class="price-pool">Prize Pool ₹47K+</div>
+            
           </div>
           <div class="event-price free-price">FREE</div>
         </div>
@@ -435,6 +500,9 @@
 </main>
 
 <script>
+  // Registration closing time: today 1:59 PM IST
+  const REGISTRATION_END = new Date("2026-04-01T23:59:00+05:30").getTime();
+
   // ── Cursor ──────────────────────────────────────────────────────────────────
   const cursor = document.getElementById('cursor');
   const ring   = document.getElementById('cursorRing');
@@ -451,39 +519,98 @@
     el.addEventListener('mouseleave',()=>{ ring.style.transform='scale(1)'; cursor.style.transform='scale(1)'; });
   });
 
+  // ── Countdown Timer ─────────────────────────────────────────────────────────
+  function pad(n) {
+    return String(n).padStart(2, '0');
+  }
+
+  function closeRegistration() {
+    const countdownEl = document.getElementById('countdown');
+    const submitBtn = document.getElementById('submitBtn');
+
+    countdownEl.innerHTML = '<span>Registration Closed</span>';
+
+    if (submitBtn) {
+      submitBtn.textContent = 'Registration Closed';
+      submitBtn.disabled = true;
+      submitBtn.classList.remove('free-btn');
+    }
+
+    document.querySelectorAll('.event-option').forEach(el => {
+      el.style.pointerEvents = 'none';
+      el.style.opacity = '0.6';
+    });
+
+    const form = document.getElementById('regForm');
+    if (form) {
+      Array.from(form.elements).forEach(el => {
+        if (el.id !== 'submitBtn') el.disabled = true;
+      });
+    }
+  }
+
+  function startCountdown() {
+    const countdownEl = document.getElementById('countdown');
+
+    function updateCountdown() {
+      const now = new Date().getTime();
+      const diff = REGISTRATION_END - now;
+
+      if (diff <= 0) {
+        closeRegistration();
+        clearInterval(timerInterval);
+        return;
+      }
+
+      const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+      const hours = Math.floor((diff / (1000 * 60 * 60)) % 24);
+      const minutes = Math.floor((diff / (1000 * 60)) % 60);
+      const seconds = Math.floor((diff / 1000) % 60);
+
+      countdownEl.innerHTML = `
+        ${pad(days)}d 
+        <span>${pad(hours)}h</span> 
+        ${pad(minutes)}m 
+        ${pad(seconds)}s
+      `;
+    }
+
+    updateCountdown();
+    const timerInterval = setInterval(updateCountdown, 1000);
+  }
+
+  startCountdown();
+
   // ── State ────────────────────────────────────────────────────────────────────
-  let selectedEvent = null;   // { event, name, price }
+  let selectedEvent = null;
   let selectedSubCatEl = document.querySelector('.sub-opt.selected');
 
   // ── Event Selection ──────────────────────────────────────────────────────────
   function selectEvent(el) {
-  document.querySelectorAll('.event-option').forEach(e => e.classList.remove('selected'));
-  el.classList.add('selected');
+    document.querySelectorAll('.event-option').forEach(e => e.classList.remove('selected'));
+    el.classList.add('selected');
 
-  const evt   = el.dataset.event;
-  const eName = el.dataset.name;
-  let price   = parseInt(el.dataset.price);
+    const evt   = el.dataset.event;
+    const eName = el.dataset.name;
+    let price   = parseInt(el.dataset.price);
 
-  // ✅ Handle Robo War pricing
-  if (evt === 'robo-war') {
-    selectedSubCatEl = null; // reset sub-category selection
-    
+    if (evt === 'robo-war') {
+      selectedSubCatEl = null;
+    }
+    if (evt === 'robo-soccer' || evt === 'open-innovation') {
+      selectedSubCatEl = null;
+    }
+
+    const projectField = document.getElementById('projectTitleGroup');
+    if (evt === 'open-innovation') {
+      projectField.style.display = 'block';
+    } else {
+      projectField.style.display = 'none';
+    }
+
+    selectedEvent = { event: evt, name: eName, price };
+    updateSummary();
   }
-  if (evt === 'robo-soccer' || evt === 'open-innovation') {
-    selectedSubCatEl = null; // reset sub-category selection  
-  }
-  // ✅ SHOW / HIDE PROJECT FIELD
-  const projectField = document.getElementById('projectTitleGroup');
-  if (evt === 'open-innovation') {
-    projectField.style.display = 'block';
-  } else {
-    projectField.style.display = 'none';
-  }
-
-  selectedEvent = { event: evt, name: eName, price };
-
-  updateSummary();
-}
 
   function selectSubCat(el, e) {
     e.stopPropagation();
@@ -496,7 +623,6 @@
     }
   }
 
-  // ── Summary Update ────────────────────────────────────────────────────────────
   function updateSummary() {
     if (!selectedEvent) return;
     document.getElementById('summaryEvent').textContent = selectedEvent.name;
@@ -520,7 +646,6 @@
     btn.disabled = false;
   }
 
-  // ── Team Members ──────────────────────────────────────────────────────────────
   let memberCount = 0;
   function addMember() {
     memberCount++;
@@ -532,18 +657,17 @@
       <button type="button" class="remove-member" onclick="removeMember(${memberCount})">✕</button>
     `;
     document.getElementById('membersContainer').appendChild(div);
-    // cursor for new elements
     div.querySelectorAll('button,input').forEach(el=>{
       el.addEventListener('mouseenter',()=>{ ring.style.transform='scale(1.7)'; cursor.style.transform='scale(0.5)'; });
       el.addEventListener('mouseleave',()=>{ ring.style.transform='scale(1)'; cursor.style.transform='scale(1)'; });
     });
   }
+
   function removeMember(id) {
     const el = document.getElementById('member-'+id);
     if (el) el.remove();
   }
 
-  // ── Validation ────────────────────────────────────────────────────────────────
   function validate() {
     let ok = true;
     const fields = [
@@ -566,210 +690,20 @@
     return ok;
   }
 
-  // ── Collect Form Data ─────────────────────────────────────────────────────────
   function getFormData() {
     const members = [...document.querySelectorAll('#membersContainer input')]
       .map(i=>i.value.trim()).filter(Boolean);
     return {
-      name:     document.getElementById('name').value.trim(),
-      email:    document.getElementById('email').value.trim(),
-      phone:    document.getElementById('phone').value.trim(),
-      college:  document.getElementById('college').value.trim(),
+      name: document.getElementById('name').value.trim(),
+      email: document.getElementById('email').value.trim(),
+      phone: document.getElementById('phone').value.trim(),
+      college: document.getElementById('college').value.trim(),
       teamName: document.getElementById('teamName').value.trim(),
       projectTitle: document.getElementById('projectTitle').value.trim(),
       members,
-      event:    selectedEvent.name,
+      event: selectedEvent.name,
       category: selectedSubCatEl ? selectedSubCatEl.dataset.cat : '',
-      price:    selectedEvent.price,
+      price: selectedEvent.price,
     };
   }
-
- // ─────────────────────────────────────────────────────────────
-// ✅ CONFIG — REPLACE THESE ONCE
-// ─────────────────────────────────────────────────────────────
-
-// 👉 Your Google Form ID (already correct)
-const FORM_ID = '1FAIpQLSfNDKD6LVPWtzax7Nh4L4Z2HFX4Q9maUZsevlOpX7WCPG4jLg';
-
-// 👉 URLs
-const GOOGLE_FORM_VIEW = `https://docs.google.com/forms/d/e/${FORM_ID}/viewform?usp=pp_url`;
-const GOOGLE_FORM_ACTION = `https://docs.google.com/forms/d/e/${FORM_ID}/formResponse`;
-
-// 👉 ⚠️ REPLACE THESE ENTRY IDs FROM YOUR FORM
-const ENTRY_IDS = {
-  name:     'entry.2092238618',
-  email:    'entry.1556369182',
-  phone:    'entry.479301265',
-  college:  'entry.756518909',
-  team:     'entry.168494097',
-  event:    'entry.1578485876',
-  category: 'entry.1670561038',
-  projectTitle: 'entry.208229991',
-  payment:  'entry.1997554548',
-  members:  'entry.1866121611',
-  payment:  'entry.356866430'
-};
-
-
-// ─────────────────────────────────────────────────────────────
-// 🎉 SUCCESS UI
-// ─────────────────────────────────────────────────────────────
-function showSuccess(data, paymentId) {
-  alert(
-    `✅ Registration Successful!\n\n` +
-    `Name: ${data.name}\n` +
-    `Event: ${data.event}\n` +
-    `Payment: ${paymentId || 'FREE'}`
-  );
-}
-
-
-// ─────────────────────────────────────────────────────────────
-// 🆓 FREE REGISTRATION FLOW
-// ─────────────────────────────────────────────────────────────
-function handleFreeRegistration(data) {
-  // 🚀 Submit silently (no redirect)
-  submitToGoogleForm(data, 'FREE');
-
-  // ✅ Show success on your site
-  showSuccess(data, null);
-}
-
-
-// ─────────────────────────────────────────────────────────────
-// 💳 RAZORPAY PAYMENT FLOW
-// ─────────────────────────────────────────────────────────────
-function initiateRazorpay(data) {
-  const options = {
- key: 'rzp_live_SWEJcjyF6Gek5R',
-// key: 'rzp_test_STTZKLmIdrBl4e',
-
-    amount: data.price * 100,
-    currency: 'INR',
-
-    name: 'Makers Carnival 2026',
-    description: data.event + (data.category ? ' — ' + data.category : ''),
-
-    prefill: {
-      name: data.name,
-      email: data.email,
-      contact: data.phone,
-    },
-
-    notes: {
-      college: data.college,
-      team_name: data.teamName,
-      event: data.event,
-      category: data.category,
-      members: data.members.join(', ')
-    },
-
-    theme: { color: '#d94f00' },
-
-    modal: {
-      ondismiss: function () {
-        document.getElementById('submitBtn').disabled = false;
-      }
-    },
-
-    handler: function (response) {
-      // ✅ Payment success
-      submitToGoogleForm(data, response.razorpay_payment_id);
-      showSuccess(data, response.razorpay_payment_id);
-    }
-  };
-
-  const rzp = new Razorpay(options);
-
-  rzp.on('payment.failed', function (resp) {
-    alert('❌ Payment failed: ' + resp.error.description);
-    document.getElementById('submitBtn').disabled = false;
-  });
-
-  rzp.open();
-}
-
-
-// ─────────────────────────────────────────────────────────────
-// 📩 GOOGLE FORM SUBMISSION (WORKING)
-// ─────────────────────────────────────────────────────────────
-function submitToGoogleForm(data, paymentId) {
-  const body = new URLSearchParams({
-    [ENTRY_IDS.name]: data.name,
-    [ENTRY_IDS.email]: data.email,
-    [ENTRY_IDS.phone]: data.phone,
-    [ENTRY_IDS.college]: data.college,
-    [ENTRY_IDS.team]: data.teamName,
-    [ENTRY_IDS.event]: data.event,
-    [ENTRY_IDS.category]: data.category || 'N/A',
-    [ENTRY_IDS.members]: data.members?.join(', ') || 'Solo',
-    [ENTRY_IDS.payment]: paymentId || 'FREE',
-    [ENTRY_IDS.projectTitle]: data.projectTitle || 'N/A' 
-  });
-
-  fetch(GOOGLE_FORM_ACTION, {
-    method: 'POST',
-    mode: 'no-cors',
-    body
-  }).catch(() => {
-    // silent fail (Google Forms doesn't return response)
-  });
-}
-
-  // ── Show Success ──────────────────────────────────────────────────────────────
-  function showSuccess(data, paymentId) {
-  const overlay = document.getElementById('successOverlay');
-
-  let extraInfo = '';
-  const eventName = (data.event || '').toLowerCase().trim();
-
-  if (eventName.includes('open')) {
-    // 🔥 Always ignore category for Open Innovation
-    extraInfo = data.projectTitle 
-      ? ` (Project: ${data.projectTitle})`
-      : '';
-  } else if (eventName.includes('robo soccer')) {
-    // 🤖 For Robo Soccer, show no category 
-     extraInfo = ''
-  } else {
-    extraInfo = data.category ? ` (${data.category})` : '';
-  }
-
-  document.getElementById('successDetail').textContent =
-    `Hey ${data.name}! Your registration for ${data.event}${extraInfo} is confirmed. See you on Apr 3–4 at JECRC University, Jaipur.`;
-
-  if (paymentId) {
-    document.getElementById('successRef').textContent = 'Payment ID: ' + paymentId;
-  }
-
-  overlay.classList.add('show');
-  window.scrollTo({ top: 0, behavior: 'smooth' });
-}
-
-  // ── Form Submit ───────────────────────────────────────────────────────────────
-  document.getElementById('regForm').addEventListener('submit', function(e) {
-    e.preventDefault();
-    if (!validate()) return;
-    const data = getFormData();
-    document.getElementById('submitBtn').disabled = true;
-   if (data.price === 0) {
-  handleFreeRegistration(data);
-    } else {
-      initiateRazorpay(data);
-    }
-  });
-
-  // ── Clear errors on input ─────────────────────────────────────────────────────
-  ['name','phone','email','college','teamName'].forEach(id=>{
-    document.getElementById(id).addEventListener('input', function(){
-      this.classList.remove('error');
-      const errEl = document.getElementById(id.replace('N','n').replace('P','p')+'Err');
-      if (errEl) errEl.style.display='none';
-    });
-  });
-  document.getElementById('phone').addEventListener('input',function(){
-    this.value=this.value.replace(/\D/g,'').slice(0,10);
-  });
 </script>
-</body>
-</html>
