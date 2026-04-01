@@ -27,6 +27,25 @@
     min-height: 100vh;
     cursor: none;
   }
+  .rule-btn {
+  display: inline-block;
+  margin-top: 0.8rem;
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 0.6rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--ink);
+  border: 1px solid var(--border);
+  padding: 0.35rem 0.7rem;
+  text-decoration: none;
+  transition: all 0.2s;
+}
+
+.rule-btn:hover {
+  border-color: var(--orange);
+  color: var(--orange);
+  background: rgba(217, 79, 0, 0.05);
+}
 
   /* CURSOR */
   .cursor { width:10px;height:10px;background:var(--orange);border-radius:50%;position:fixed;pointer-events:none;z-index:9999;transition:transform 0.1s; }
@@ -314,6 +333,9 @@
             <div class="event-name">Robo War</div>
             <div class="event-desc">Combat robotics — 3 lbs</div>
           <div class="price-pool" id="roboWarPool">Prize Pool ₹25K+</div>
+          <a href="/ROBOWAR.pdf" target="_blank" class="rule-btn" onclick="event.stopPropagation()">
+            Rulebook
+          </a>
           </div>
           <div class="event-price" id="roboWarPrice">₹1200</div>
         </div>
@@ -328,6 +350,9 @@
             <div class="event-name">Robo Soccer</div>
             <div class="event-desc">Autonomous bot football — best team wins</div>
             <div class="price-pool">Prize Pool ₹15K+</div>
+            <a href="/robo_soccer_rules.pdf" target="_blank" class="rule-btn" onclick="event.stopPropagation()">
+            Rulebook
+          </a>
           </div>
           <div class="event-price">₹800</div>
         </div>
@@ -342,6 +367,9 @@
             <div class="event-name">Line Following Robot</div>
             <div class="event-desc">Navigate the track — speed and precision</div>
             <div class="price-pool">Prize Pool ₹8K+</div>
+            <a href="/LFR.pdf" target="_blank" class="rule-btn" onclick="event.stopPropagation()">
+            Rulebook
+          </a>
           </div>
           <div class="event-price">₹500</div>
         </div>
@@ -356,6 +384,9 @@
             <div class="event-name">Robo Hurdle</div>
             <div class="event-desc">Navigate the course — speed and agility</div>
           <div class="price-pool" id="roboHurdlePool">Prize Pool ₹15K+</div>
+          <a href="/robo_hurdle_rules.pdf" target="_blank" class="rule-btn" onclick="event.stopPropagation()">
+            Rulebook
+          </a>
           </div>
           <div class="event-price" id="roboHurdlePrice">₹800</div>
         </div>
