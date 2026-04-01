@@ -31,25 +31,7 @@
   /* CURSOR */
   .cursor { width:10px;height:10px;background:var(--orange);border-radius:50%;position:fixed;pointer-events:none;z-index:9999;transition:transform 0.1s; }
   .cursor-ring { width:34px;height:34px;border:1.5px solid var(--ink);border-radius:50%;position:fixed;pointer-events:none;z-index:9998;transition:all 0.15s ease;opacity:0.3; }
-  .rule-btn {
-  display: inline-block;
-  margin-top: 0.8rem;
-  font-family: 'IBM Plex Mono', monospace;
-  font-size: 0.6rem;
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
-  color: var(--ink);
-  border: 1px solid var(--border);
-  padding: 0.35rem 0.7rem;
-  text-decoration: none;
-  transition: all 0.2s;
-}
 
-.rule-btn:hover {
-  border-color: var(--orange);
-  color: var(--orange);
-  background: rgba(217, 79, 0, 0.05);
-}
   /* NAV */
   nav {
     position: fixed; top:0; width:100%; z-index:100;
@@ -332,9 +314,6 @@
             <div class="event-name">Robo War</div>
             <div class="event-desc">Combat robotics — 3 lbs</div>
           <div class="price-pool" id="roboWarPool">Prize Pool ₹25K+</div>
-          <a href="/ROBOWAR.pdf" target="_blank" class="rule-btn" onclick="event.stopPropagation()">
-            Rulebook
-          </a>
           </div>
           <div class="event-price" id="roboWarPrice">₹1200</div>
         </div>
@@ -349,9 +328,6 @@
             <div class="event-name">Robo Soccer</div>
             <div class="event-desc">Autonomous bot football — best team wins</div>
             <div class="price-pool">Prize Pool ₹15K+</div>
-            <a href="/robo_soccer_rules.pdf" target="_blank" class="rule-btn" onclick="event.stopPropagation()">
-            Rulebook
-          </a>
           </div>
           <div class="event-price">₹800</div>
         </div>
@@ -366,9 +342,6 @@
             <div class="event-name">Line Following Robot</div>
             <div class="event-desc">Navigate the track — speed and precision</div>
             <div class="price-pool">Prize Pool ₹8K+</div>
-            <a href="/LFR.pdf" target="_blank" class="rule-btn" onclick="event.stopPropagation()">
-            Rulebook
-          </a>
           </div>
           <div class="event-price">₹500</div>
         </div>
@@ -383,9 +356,6 @@
             <div class="event-name">Robo Hurdle</div>
             <div class="event-desc">Navigate the course — speed and agility</div>
           <div class="price-pool" id="roboHurdlePool">Prize Pool ₹15K+</div>
-          <a href="/robo_hurdle_rules.pdf" target="_blank" class="rule-btn" onclick="event.stopPropagation()">
-            Rulebook
-          </a>
           </div>
           <div class="event-price" id="roboHurdlePrice">₹800</div>
         </div>
@@ -400,7 +370,6 @@
             <div class="event-name">Open Innovation</div>
             <div class="event-desc">Present your idea — open to all builders</div>
             <div class="price-pool">Prize Pool ₹47K+</div>
-            
           </div>
           <div class="event-price free-price">FREE</div>
         </div>
@@ -501,59 +470,240 @@
 
 <script>
   // Registration closing time: today 1:59 PM IST
-  const REGISTRATION_END = new Date("2026-04-01T23:59:00+05:30").getTime();
+  const REGISTRATION_END = new Date("2026-04-01T13:59:00+05:30").getTime();
 
   // ── Cursor ──────────────────────────────────────────────────────────────────
   const cursor = document.getElementById('cursor');
-  const ring   = document.getElementById('cursorRing');
-  let mx=0,my=0,rx=0,ry=0;
-  document.addEventListener('mousemove',e=>{ mx=e.clientX; my=e.clientY; });
-  (function loop(){
-    rx+=(mx-rx)*0.14; ry+=(my-ry)*0.14;
-    cursor.style.left=mx-5+'px'; cursor.style.top=my-5+'px';
-    ring.style.left=rx-17+'px'; ring.style.top=ry-17+'px';
-    requestAnimationFrame(loop);
-  })();
-  document.querySelectorAll('a,button,.event-option,.sub-opt').forEach(el=>{
-    el.addEventListener('mouseenter',()=>{ ring.style.transform='scale(1.7)'; cursor.style.transform='scale(0.5)'; });
-    el.addEventListener('mouseleave',()=>{ ring.style.transform='scale(1)'; cursor.style.transform='scale(1)'; });
-  });
+  const ring = document.getElementById('cursorRing');
 
-  // ── Countdown Timer ─────────────────────────────────────────────────────────
+  let mx = 0, my = 0, rx = 0, ry = 0;
+
+  if (cursor && ring) {
+    document.addEventListener('mousemove', (e) => {
+      mx = e.clientX;
+      my = e.clientY;
+    });
+
+    (function loop() {
+      rx += (mx - rx) * 0.14;
+      ry += (my - ry) * 0.14;
+
+      cursor.style.left = (mx - 5) + 'px';
+      cursor.style.top = (my - 5) + 'px';
+      ring.style.left = (rx - 17) + 'px';
+      ring.style.top = (ry - 17) + 'px';
+
+      requestAnimationFrame(loop);
+    })();
+  }
+
+  function bindCursorHover(scope = document) {
+    if (!cursor || !ring) return;
+    scope.querySelectorAll('a, button, input, .event-option, .sub-opt').forEach(el => {
+      el.addEventListener('mouseenter', () => {
+        ring.style.transform = 'scale(1.7)';
+        cursor.style.transform = 'scale(0.5)';
+      });
+      el.addEventListener('mouseleave', () => {
+        ring.style.transform = 'scale(1)';
+        cursor.style.transform = 'scale(1)';
+      });
+    });
+  }
+
+  bindCursorHover();
+
+  // ── Helpers ─────────────────────────────────────────────────────────────────
+  function $(id) {
+    return document.getElementById(id);
+  }
+
   function pad(n) {
     return String(n).padStart(2, '0');
   }
 
   function closeRegistration() {
-    const countdownEl = document.getElementById('countdown');
-    const submitBtn = document.getElementById('submitBtn');
-
-    countdownEl.innerHTML = '<span>Registration Closed</span>';
-
-    if (submitBtn) {
-      submitBtn.textContent = 'Registration Closed';
-      submitBtn.disabled = true;
-      submitBtn.classList.remove('free-btn');
+    const countdownEl = $('countdown');
+    const submitBtn = $('submitBtn');
+    if (countdownEl) {
+      countdownEl.innerHTML = '<span style="color:#c62828;font-weight:700;">Registrations Closed</span>';
     }
-
-    document.querySelectorAll('.event-option').forEach(el => {
-      el.style.pointerEvents = 'none';
-      el.style.opacity = '0.6';
-    });
-
-    const form = document.getElementById('regForm');
-    if (form) {
-      Array.from(form.elements).forEach(el => {
-        if (el.id !== 'submitBtn') el.disabled = true;
-      });
+    if (submitBtn) {
+      submitBtn.disabled = true;
+      submitBtn.textContent = 'Registrations Closed';
     }
   }
 
+  // ── State ───────────────────────────────────────────────────────────────────
+  let selectedEvent = null;       // { event, name, price }
+  let selectedSubCatEl = null;
+  let memberCount = 0;
+
+  // ── Event Selection ─────────────────────────────────────────────────────────
+  function selectEvent(el) {
+    document.querySelectorAll('.event-option').forEach(e => e.classList.remove('selected'));
+    el.classList.add('selected');
+
+    const evt = el.dataset.event || '';
+    const eName = el.dataset.name || '';
+    const price = parseInt(el.dataset.price || '0', 10);
+
+    const isRoboWar = evt === 'robo-war';
+    const isNoCategoryEvent = evt === 'robo-soccer' || evt === 'open-innovation';
+
+    // Reset subcategory unless specifically needed
+    if (!isRoboWar) {
+      document.querySelectorAll('.sub-opt').forEach(s => s.classList.remove('selected'));
+      selectedSubCatEl = null;
+    }
+
+    // Show/hide project title field
+    const projectField = $('projectTitleGroup');
+    if (projectField) {
+      projectField.style.display = evt === 'open-innovation' ? 'block' : 'none';
+    }
+
+    // For events that should never send category
+    if (isNoCategoryEvent) {
+      selectedSubCatEl = null;
+    }
+
+    selectedEvent = { event: evt, name: eName, price };
+
+    updateSummary();
+  }
+
+  function selectSubCat(el, e) {
+    if (e) e.stopPropagation();
+
+    if (!selectedEvent || selectedEvent.event !== 'robo-war') return;
+
+    document.querySelectorAll('.sub-opt').forEach(s => s.classList.remove('selected'));
+    el.classList.add('selected');
+    selectedSubCatEl = el;
+
+    selectedEvent.price = parseInt(el.dataset.price || '0', 10);
+    updateSummary();
+  }
+
+  // ── Summary Update ──────────────────────────────────────────────────────────
+  function updateSummary() {
+    if (!selectedEvent) return;
+
+    const summaryEvent = $('summaryEvent');
+    const catRow = $('catRow');
+    const summaryCategory = $('summaryCategory');
+    const summaryTotal = $('summaryTotal');
+    const btn = $('submitBtn');
+
+    if (summaryEvent) summaryEvent.textContent = selectedEvent.name;
+
+    if (catRow && summaryCategory) {
+      if (selectedEvent.event === 'robo-war' && selectedSubCatEl) {
+        catRow.style.display = 'flex';
+        summaryCategory.textContent = `${selectedSubCatEl.dataset.cat} class`;
+      } else {
+        catRow.style.display = 'none';
+        summaryCategory.textContent = '';
+      }
+    }
+
+    if (btn && summaryTotal) {
+      if (selectedEvent.price === 0) {
+        summaryTotal.innerHTML = '<span class="free-badge">FREE</span>';
+        btn.textContent = 'Register for Free →';
+        btn.className = 'submit-btn free-btn';
+      } else {
+        const formatted = '₹' + selectedEvent.price.toLocaleString('en-IN');
+        summaryTotal.textContent = formatted;
+        btn.textContent = `Pay ${formatted} & Register →`;
+        btn.className = 'submit-btn';
+      }
+      btn.disabled = false;
+    }
+  }
+
+  // ── Team Members ────────────────────────────────────────────────────────────
+  function addMember() {
+    memberCount++;
+
+    const div = document.createElement('div');
+    div.className = 'member-row';
+    div.id = 'member-' + memberCount;
+    div.innerHTML = `
+      <input type="text" placeholder="Member ${memberCount} name" />
+      <button type="button" class="remove-member" onclick="removeMember(${memberCount})">✕</button>
+    `;
+
+    $('membersContainer')?.appendChild(div);
+    bindCursorHover(div);
+  }
+
+  function removeMember(id) {
+    const el = $('member-' + id);
+    if (el) el.remove();
+  }
+
+  // ── Validation ──────────────────────────────────────────────────────────────
+  function validate() {
+    let ok = true;
+
+    const fields = [
+      { id: 'name', err: 'nameErr', test: v => v.trim().length > 1 },
+      { id: 'phone', err: 'phoneErr', test: v => /^[6-9]\d{9}$/.test(v.trim()) },
+      { id: 'email', err: 'emailErr', test: v => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v.trim()) },
+      { id: 'college', err: 'collegeErr', test: v => v.trim().length > 2 },
+      { id: 'teamName', err: 'teamErr', test: v => v.trim().length > 0 }
+    ];
+
+    fields.forEach(f => {
+      const inp = $(f.id);
+      const err = $(f.err);
+      if (!inp || !err) return;
+
+      if (!f.test(inp.value)) {
+        inp.classList.add('error');
+        err.style.display = 'block';
+        ok = false;
+      } else {
+        inp.classList.remove('error');
+        err.style.display = 'none';
+      }
+    });
+
+    if (!selectedEvent) {
+      alert('Please select an event first.');
+      ok = false;
+    }
+
+    // Robo War requires subcategory
+    if (selectedEvent?.event === 'robo-war' && !selectedSubCatEl) {
+      alert('Please select a Robo War category.');
+      ok = false;
+    }
+
+    // Open Innovation requires project title
+    if (selectedEvent?.event === 'open-innovation') {
+      const projectTitle = $('projectTitle');
+      if (!projectTitle || !projectTitle.value.trim()) {
+        projectTitle?.classList.add('error');
+        alert('Please enter your project title for Open Innovation.');
+        ok = false;
+      } else {
+        projectTitle.classList.remove('error');
+      }
+    }
+
+    return ok;
+  }
+
+  // ── Countdown ───────────────────────────────────────────────────────────────
   function startCountdown() {
-    const countdownEl = document.getElementById('countdown');
+    const countdownEl = $('countdown');
+    if (!countdownEl) return;
 
     function updateCountdown() {
-      const now = new Date().getTime();
+      const now = Date.now();
       const diff = REGISTRATION_END - now;
 
       if (diff <= 0) {
@@ -581,129 +731,219 @@
 
   startCountdown();
 
-  // ── State ────────────────────────────────────────────────────────────────────
-  let selectedEvent = null;
-  let selectedSubCatEl = document.querySelector('.sub-opt.selected');
-
-  // ── Event Selection ──────────────────────────────────────────────────────────
-  function selectEvent(el) {
-    document.querySelectorAll('.event-option').forEach(e => e.classList.remove('selected'));
-    el.classList.add('selected');
-
-    const evt   = el.dataset.event;
-    const eName = el.dataset.name;
-    let price   = parseInt(el.dataset.price);
-
-    if (evt === 'robo-war') {
-      selectedSubCatEl = null;
-    }
-    if (evt === 'robo-soccer' || evt === 'open-innovation') {
-      selectedSubCatEl = null;
-    }
-
-    const projectField = document.getElementById('projectTitleGroup');
-    if (evt === 'open-innovation') {
-      projectField.style.display = 'block';
-    } else {
-      projectField.style.display = 'none';
-    }
-
-    selectedEvent = { event: evt, name: eName, price };
-    updateSummary();
-  }
-
-  function selectSubCat(el, e) {
-    e.stopPropagation();
-    document.querySelectorAll('.sub-opt').forEach(s=>s.classList.remove('selected'));
-    el.classList.add('selected');
-    selectedSubCatEl = el;
-    if (selectedEvent && selectedEvent.event === 'robo-war') {
-      selectedEvent.price = parseInt(el.dataset.price);
-      updateSummary();
-    }
-  }
-
-  function updateSummary() {
-    if (!selectedEvent) return;
-    document.getElementById('summaryEvent').textContent = selectedEvent.name;
-    const catRow = document.getElementById('catRow');
-    if (selectedEvent.event === 'robo-war' && selectedSubCatEl) {
-      catRow.style.display = 'flex';
-      document.getElementById('summaryCategory').textContent = selectedSubCatEl.dataset.cat + ' class';
-    } else {
-      catRow.style.display = 'none';
-    }
-    const btn = document.getElementById('submitBtn');
-    if (selectedEvent.price === 0) {
-      document.getElementById('summaryTotal').innerHTML = '<span class="free-badge">FREE</span>';
-      btn.textContent = 'Register for Free →';
-      btn.className = 'submit-btn free-btn';
-    } else {
-      document.getElementById('summaryTotal').textContent = '₹' + selectedEvent.price.toLocaleString('en-IN');
-      btn.textContent = 'Pay ₹' + selectedEvent.price.toLocaleString('en-IN') + ' & Register →';
-      btn.className = 'submit-btn';
-    }
-    btn.disabled = false;
-  }
-
-  let memberCount = 0;
-  function addMember() {
-    memberCount++;
-    const div = document.createElement('div');
-    div.className = 'member-row';
-    div.id = 'member-' + memberCount;
-    div.innerHTML = `
-      <input type="text" placeholder="Member ${memberCount} name" />
-      <button type="button" class="remove-member" onclick="removeMember(${memberCount})">✕</button>
-    `;
-    document.getElementById('membersContainer').appendChild(div);
-    div.querySelectorAll('button,input').forEach(el=>{
-      el.addEventListener('mouseenter',()=>{ ring.style.transform='scale(1.7)'; cursor.style.transform='scale(0.5)'; });
-      el.addEventListener('mouseleave',()=>{ ring.style.transform='scale(1)'; cursor.style.transform='scale(1)'; });
-    });
-  }
-
-  function removeMember(id) {
-    const el = document.getElementById('member-'+id);
-    if (el) el.remove();
-  }
-
-  function validate() {
-    let ok = true;
-    const fields = [
-      { id:'name',    err:'nameErr',    test: v=>v.trim().length>1 },
-      { id:'phone',   err:'phoneErr',   test: v=>/^[6-9]\d{9}$/.test(v.trim()) },
-      { id:'email',   err:'emailErr',   test: v=>/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v.trim()) },
-      { id:'college', err:'collegeErr', test: v=>v.trim().length>2 },
-      { id:'teamName',err:'teamErr',    test: v=>v.trim().length>0 },
-    ];
-    fields.forEach(f=>{
-      const inp = document.getElementById(f.id);
-      const err = document.getElementById(f.err);
-      if (!f.test(inp.value)) {
-        inp.classList.add('error'); err.style.display='block'; ok=false;
-      } else {
-        inp.classList.remove('error'); err.style.display='none';
-      }
-    });
-    if (!selectedEvent) { alert('Please select an event first.'); ok=false; }
-    return ok;
-  }
-
+  // ── Form Data ────────────────────────────────────────────────────────────────
   function getFormData() {
     const members = [...document.querySelectorAll('#membersContainer input')]
-      .map(i=>i.value.trim()).filter(Boolean);
+      .map(i => i.value.trim())
+      .filter(Boolean);
+
+    let category = '';
+    if (selectedEvent?.event === 'robo-war' && selectedSubCatEl) {
+      category = selectedSubCatEl.dataset.cat || '';
+    }
+
     return {
-      name: document.getElementById('name').value.trim(),
-      email: document.getElementById('email').value.trim(),
-      phone: document.getElementById('phone').value.trim(),
-      college: document.getElementById('college').value.trim(),
-      teamName: document.getElementById('teamName').value.trim(),
-      projectTitle: document.getElementById('projectTitle').value.trim(),
+      name: $('name')?.value.trim() || '',
+      email: $('email')?.value.trim() || '',
+      phone: $('phone')?.value.trim() || '',
+      college: $('college')?.value.trim() || '',
+      teamName: $('teamName')?.value.trim() || '',
+      projectTitle: $('projectTitle')?.value.trim() || '',
       members,
-      event: selectedEvent.name,
-      category: selectedSubCatEl ? selectedSubCatEl.dataset.cat : '',
-      price: selectedEvent.price,
+      event: selectedEvent?.name || '',
+      eventKey: selectedEvent?.event || '',
+      category,
+      price: selectedEvent?.price || 0
     };
   }
+
+  // ── Config ──────────────────────────────────────────────────────────────────
+  const FORM_ID = '1FAIpQLSfNDKD6LVPWtzax7Nh4L4Z2HFX4Q9maUZsevlOpX7WCPG4jLg';
+
+  const GOOGLE_FORM_VIEW = `https://docs.google.com/forms/d/e/${FORM_ID}/viewform?usp=pp_url`;
+  const GOOGLE_FORM_ACTION = `https://docs.google.com/forms/d/e/${FORM_ID}/formResponse`;
+
+  const ENTRY_IDS = {
+    name: 'entry.2092238618',
+    email: 'entry.1556369182',
+    phone: 'entry.479301265',
+    college: 'entry.756518909',
+    team: 'entry.168494097',
+    event: 'entry.1578485876',
+    category: 'entry.1670561038',
+    projectTitle: 'entry.208229991',
+    members: 'entry.1866121611',
+    payment: 'entry.356866430'
+  };
+
+  // ── Success UI ──────────────────────────────────────────────────────────────
+  function showSuccess(data, paymentId) {
+    const overlay = $('successOverlay');
+    const successDetail = $('successDetail');
+    const successRef = $('successRef');
+
+    let extraInfo = '';
+
+    if (data.eventKey === 'open-innovation') {
+      extraInfo = data.projectTitle ? ` (Project: ${data.projectTitle})` : '';
+    } else if (data.eventKey === 'robo-war') {
+      extraInfo = data.category ? ` (${data.category})` : '';
+    }
+
+    if (successDetail) {
+      successDetail.textContent =
+        `Hey ${data.name}! Your registration for ${data.event}${extraInfo} is confirmed. See you on Apr 3–4 at JECRC University, Jaipur.`;
+    }
+
+    if (successRef) {
+      successRef.textContent = paymentId ? `Payment ID: ${paymentId}` : 'Payment ID: FREE';
+    }
+
+    if (overlay) {
+      overlay.classList.add('show');
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    } else {
+      alert(
+        `✅ Registration Successful!\n\n` +
+        `Name: ${data.name}\n` +
+        `Event: ${data.event}${extraInfo}\n` +
+        `Payment: ${paymentId || 'FREE'}`
+      );
+    }
+  }
+
+  // ── Google Form Submission ──────────────────────────────────────────────────
+  function submitToGoogleForm(data, paymentId) {
+    const body = new URLSearchParams({
+      [ENTRY_IDS.name]: data.name,
+      [ENTRY_IDS.email]: data.email,
+      [ENTRY_IDS.phone]: data.phone,
+      [ENTRY_IDS.college]: data.college,
+      [ENTRY_IDS.team]: data.teamName,
+      [ENTRY_IDS.event]: data.event,
+      [ENTRY_IDS.category]: data.category || 'N/A',
+      [ENTRY_IDS.members]: data.members.length ? data.members.join(', ') : 'Solo',
+      [ENTRY_IDS.payment]: paymentId || 'FREE',
+      [ENTRY_IDS.projectTitle]: data.projectTitle || 'N/A'
+    });
+
+    return fetch(GOOGLE_FORM_ACTION, {
+      method: 'POST',
+      mode: 'no-cors',
+      body
+    }).catch(() => {
+      // Google Forms usually won't return readable response in no-cors mode
+    });
+  }
+
+  // ── Free Registration ───────────────────────────────────────────────────────
+  async function handleFreeRegistration(data) {
+    await submitToGoogleForm(data, 'FREE');
+    showSuccess(data, null);
+    $('regForm')?.reset();
+  }
+
+  // ── Razorpay Payment ────────────────────────────────────────────────────────
+  function initiateRazorpay(data) {
+    const submitBtn = $('submitBtn');
+
+    const options = {
+      key: 'rzp_live_SWEJcjyF6Gek5R',
+      amount: data.price * 100,
+      currency: 'INR',
+
+      name: 'Makers Carnival 2026',
+      description: data.event + (data.category ? ' — ' + data.category : ''),
+
+      prefill: {
+        name: data.name,
+        email: data.email,
+        contact: data.phone
+      },
+
+      notes: {
+        college: data.college,
+        team_name: data.teamName,
+        event: data.event,
+        category: data.category,
+        project_title: data.projectTitle,
+        members: data.members.join(', ')
+      },
+
+      theme: { color: '#d94f00' },
+
+      modal: {
+        ondismiss: function () {
+          if (submitBtn) submitBtn.disabled = false;
+        }
+      },
+
+      handler: async function (response) {
+        await submitToGoogleForm(data, response.razorpay_payment_id);
+        showSuccess(data, response.razorpay_payment_id);
+        $('regForm')?.reset();
+      }
+    };
+
+    const rzp = new Razorpay(options);
+
+    rzp.on('payment.failed', function (resp) {
+      alert('❌ Payment failed: ' + (resp?.error?.description || 'Unknown error'));
+      if (submitBtn) submitBtn.disabled = false;
+    });
+
+    rzp.open();
+  }
+
+  // ── Form Submit ─────────────────────────────────────────────────────────────
+  $('regForm')?.addEventListener('submit', function (e) {
+    e.preventDefault();
+
+    if (Date.now() > REGISTRATION_END) {
+      closeRegistration();
+      return;
+    }
+
+    if (!validate()) return;
+
+    const data = getFormData();
+    const submitBtn = $('submitBtn');
+    if (submitBtn) submitBtn.disabled = true;
+
+    if (data.price === 0) {
+      handleFreeRegistration(data).finally(() => {
+        if (submitBtn) submitBtn.disabled = false;
+      });
+    } else {
+      initiateRazorpay(data);
+    }
+  });
+
+  // ── Clear Errors on Input ───────────────────────────────────────────────────
+  const fieldErrorMap = {
+    name: 'nameErr',
+    phone: 'phoneErr',
+    email: 'emailErr',
+    college: 'collegeErr',
+    teamName: 'teamErr',
+    projectTitle: 'projectTitleErr'
+  };
+
+  Object.keys(fieldErrorMap).forEach(id => {
+    const el = $(id);
+    const errEl = $(fieldErrorMap[id]);
+
+    if (el) {
+      el.addEventListener('input', function () {
+        this.classList.remove('error');
+        if (errEl) errEl.style.display = 'none';
+      });
+    }
+  });
+
+  $('phone')?.addEventListener('input', function () {
+    this.value = this.value.replace(/\D/g, '').slice(0, 10);
+  });
 </script>
+</body>
+</html>
