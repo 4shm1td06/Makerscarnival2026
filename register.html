@@ -179,6 +179,7 @@
     padding:0.8rem 1rem;
     outline:none;
     transition:border-color 0.2s;
+    appearance: none;
     -webkit-appearance:none;
   }
   .form-group input:focus { border-color:var(--orange); }
@@ -326,7 +327,8 @@
 
        <!-- Robo War -->
       <div class="event-option" data-event="robo-war" data-price="1200" data-name="Robo War" onclick="selectEvent(this)">
-      <input type="radio" name="event" value="robo-war">
+      <label for="robowar">Robo War</label>
+      <input type="radio" name="event" id="robowar">
         <div class="event-check"></div>
         <div class="event-option-top" style="padding-right:1.5rem;">
           <div>
@@ -343,7 +345,8 @@
 
       <!-- Robo Soccer -->
       <div class="event-option" data-event="robo-soccer" data-price="800" data-name="Robo Soccer" onclick="selectEvent(this)">
-      <input type="radio" name="event" value="robo-soccer">
+      <label for="robosoc"></label>
+      <input type="radio" name="event" id="robosoc">
         <div class="event-check"></div>
         <div class="event-option-top" style="padding-right:1.5rem;">
           <div>
@@ -357,27 +360,11 @@
           <div class="event-price">₹800</div>
         </div>
       </div>
-     
-      <!-- LFR-->
-    <div class="event-option" data-event="line-following-robot" data-price="500" data-name="Line Following Robot" onclick="selectEvent(this)">
-      <input type="radio" name="event" value="line-following-robot">
-        <div class="event-check"></div>
-        <div class="event-option-top" style="padding-right:1.5rem;">
-          <div>
-            <div class="event-name">Line Following Robot</div>
-            <div class="event-desc">Navigate the track — speed and precision</div>
-            <div class="price-pool">Prize Pool ₹8K+</div>
-            <a href="/LFR.pdf" target="_blank" class="rule-btn" onclick="event.stopPropagation()">
-            Rulebook
-          </a>
-          </div>
-          <div class="event-price">₹500</div>
-        </div>
-      </div>
-
+    
        <!-- Robo hurrdle -->
       <div class="event-option" data-event="robo-hurdle" data-price="800" data-name="Robo Hurdle" onclick="selectEvent(this)">
-      <input type="radio" name="event" value="robo-hurdle">
+      <label for="robohurdle"></label>
+      <input type="radio" name="event" id="robohurdle">
         <div class="event-check"></div>
         <div class="event-option-top" style="padding-right:1.5rem;">
           <div>
@@ -394,7 +381,8 @@
 
       <!-- Open Innovation -->
       <div class="event-option" data-event="open-innovation" data-price="0" data-name="Open Innovation" onclick="selectEvent(this)">
-      <input type="radio" name="event" value="open-innovation">
+      <label for="openinnov"></label>
+      <input type="radio" name="event" id="openinnov">
         <div class="event-check"></div>
         <div class="event-option-top" style="padding-right:1.5rem;">
           <div>
@@ -500,8 +488,8 @@
 </main>
 
 <script>
-  // Registration closing time: today 1:59 PM IST
-  const REGISTRATION_END = new Date("2026-04-02T13:59:59+05:30").getTime();
+  // Registration closing time: today 11:59 PM IST
+  const REGISTRATION_END = new Date("2026-04-02T23:59:59+05:30").getTime();
 
   // ── Cursor ──────────────────────────────────────────────────────────────────
   const cursor = document.getElementById('cursor');
